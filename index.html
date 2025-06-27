@@ -71,6 +71,9 @@
             background: white;
             color: black;
         }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen bg-black">
@@ -317,9 +320,15 @@
     </div>
 
     <div id="best-year-color-screen" class="hidden fixed inset-0 bg-white z-50 p-4 flex flex-col items-center justify-center">
-        <div class="bg-white p-8 rounded-xl shadow-lg text-center max-w-md">
-            <h1 class="text-2xl font-bold mb-4" style="color: #f9442c;">El Color de tu Mejor Año</h1>
-            <p class="text-gray-600 mb-6">Elige un color que represente la energía y la sensación de tu mejor año posible.</p>
+        <div class="bg-white p-8 rounded-xl shadow-lg text-center max-w-3xl">
+            <h2 class="text-2xl font-bold text-center mb-4" style="color: #f9442c;">Lo que experimentaste en la Visualización</h2>
+            <p class="text-gray-700 text-center mb-6 leading-relaxed">
+                Haz una pausa y conecta con la escena que imaginaste…<br>
+                <strong>¿Pudiste visualizarlo?, ¿Qué hacías?, ¿Cómo te veías y sentías? </strong><br>
+                <br>
+                Ahora, elige un color que represente la energía y la sensación de tu mejor año posible.<br>
+                Este color será tu ancla personal para volver a esa visión cuando lo necesites.
+            </p>
             <div class="flex items-center space-x-4 mt-4">
                 <input type="range" id="best-year-color-slider" min="0" max="360" value="50" class="color-slider w-full h-3 rounded-lg appearance-none cursor-pointer">
                 <div id="best-year-color-preview" class="w-12 h-12 rounded-full border-4 border-gray-200 flex-shrink-0"></div>
@@ -350,18 +359,10 @@
         <div class="w-full max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-xl">
             <h1 class="text-3xl md:text-4xl font-bold text-center mb-4" style="color: #f9442c;">Diseña el camino <br>hacia tu bienestar integral</h1>
             <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">Ya sabes dónde estás hoy.<br>Ahora es momento de definir los pasos que te llevarán al equilibrio que deseas. <br> No se trata de hacer todo de golpe, sino de comprometerte con acciones que tengan sentido para ti.</p>
-
-            <div id="action-plan-guide" class="border-l-4 p-4 rounded-r-lg mb-8">
-                <h4 class="font-bold mb-2">¿Cómo definir tus pasos?</h4>
-                <ul class="list-disc list-inside text-sm space-y-1">
-                    <li>Piensa en pequeños compromisos semanales que puedas sostener.</li>
-                    <li>Usa verbos de acción: caminar 30 minutos, apagar el celular a las 9 p.m., agendar cita médica…</li>
-                    <li><span data-texto="guia_pasos_3">Sé honesto(a): no se trata de lo ideal, sino de lo que puedes realmente hacer.</span></li>
-                </ul>
+            
+            <div id="action-plan-content">
+                <!-- This content will be dynamically generated -->
             </div>
-
-            <div id="action-plan-areas" class="space-y-8">
-                </div>
 
             <div class="text-center mt-10">
                 <p class="text-gray-600 italic mb-6">Cada paso que escribiste es una decisión hacia el equilibrio. <br>No necesitas tener todo resuelto, solo empezar con lo que hoy está en tus manos.</p>
@@ -471,6 +472,7 @@ let userGender = 'neutro';
 let userSelectedColor = '#3b82f6';
 let generalSatisfactionLevel = 2;
 let bestYearColor = '#f7d038';
+let userSelectedActionAreas = [];
 
 // Variables for animation
 let journeyAnimationId, starAnimationId, pulseInterval, ambientSound, soundLoop;
@@ -534,7 +536,7 @@ const satisfactionDisplay = document.getElementById('satisfaction-display');
 const satisfactionDisplayValue = document.getElementById('satisfaction-display-value');
 const satisfactionDisplayWord = document.getElementById('satisfaction-display-word');
 const actionPlanScreen = document.getElementById('action-plan-screen');
-const actionPlanAreas = document.getElementById('action-plan-areas');
+const actionPlanContent = document.getElementById('action-plan-content');
 const goToFinalScreenBtn = document.getElementById('go-to-final-screen-btn');
 const downloadPdfBtn = document.getElementById('download-pdf-btn');
 const finalCongratsScreen = document.getElementById('final-congrats-screen');
@@ -832,7 +834,7 @@ modalCancelBtn.addEventListener('click', () => {
     hideModal();
 });
 
-// --- PDF EXPORT LOGIC (CON PAGINACIÓN "1 de N") ---
+// --- PDF EXPORT LOGIC (REWRITTEN AND CORRECTED) ---
 async function exportPDF() {
     if (!window.jspdf || !window.html2canvas) {
         showModal("No se pudieron cargar las librerías para generar el PDF. Intenta recargar la página.", "alert");
@@ -851,23 +853,65 @@ async function exportPDF() {
     // --- 1. Portada / Diagnóstico / Gráfica (PÁGINA 1) ---
     const logoHTML = logoSvgElement.outerHTML;
     const averageScore = lifeAreas.reduce((sum, area) => sum + area.score, 0) / lifeAreas.length;
-    let interpretationTitle = '';
-    let interpretationText = '';
-    if (averageScore <= 3) {
-        interpretationTitle = 'Desequilibrio Fuerte';
-        interpretationText = 'Tu rueda tiene baches importantes. Es momento de hacer ajustes profundos.';
-    } else if (averageScore <= 6) {
-        interpretationTitle = 'Tensión Moderada';
-        interpretationText = 'Tu rueda avanza, pero se siente forzada. Hay áreas que necesitan atención urgente.';
-    } else if (averageScore <= 8) {
-        interpretationTitle = 'Estabilidad';
-        interpretationText = 'Tienes una base sólida. Con algunos ajustes, tu rueda puede girar con más ligereza.';
+    
+    let diagnostico = '';
+    let descripcionDiagnostico = '';
+    if (averageScore < 4.5) {
+      diagnostico = "BAJO";
+      descripcionDiagnostico = "Tu energía y motivación se encuentran en un punto bajo. Es probable que te sientas drenado(a), sin claridad o arrastrando una sensación de desgaste. Reconocerlo es el primer paso para encender una transformación real.";
+    } else if (averageScore < 7.5) {
+      diagnostico = "ESTABLE";
+      descripcionDiagnostico = "Tu energía y motivación se encuentran en un punto funcional, aunque no necesariamente inspirador. Estás avanzando, pero quizá no con el impulso, la claridad o el entusiasmo que quisieras. Tu vida tiene una estructura sólida, pero podrías estar sintiendo la necesidad de ajustar ciertas áreas para recuperar ligereza y dirección.";
     } else {
-        interpretationTitle = 'Bienestar Elevado';
-        interpretationText = 'Tu rueda fluye bien. Mantén lo que funciona y enfócate en sostenerlo.';
+      diagnostico = "ALTO";
+      descripcionDiagnostico = "Tu energía y motivación se encuentran en un momento elevado. Hay satisfacción y energía positiva, aunque quizá algunos ajustes podrían ayudarte a sostener este estado y expandirlo con mayor intención.";
     }
-    const sortedAreas = [...lifeAreas].sort((a, b) => a.score - b.score);
-    const lowestAreas = sortedAreas.slice(0, 2);
+    
+    const satisfaccionGeneralTexto = getSatisfactionWord(generalSatisfactionLevel);
+    let satisfaccionDescripcion = '';
+    if (generalSatisfactionLevel <= 2) {
+        satisfaccionDescripcion = "esto significa que te sientes en un estado de supervivencia, con energía baja y probablemente enfrentando desafíos significativos.";
+    } else if (generalSatisfactionLevel <= 5) {
+        satisfaccionDescripcion = "esto significa que, aunque funcional, sientes un estancamiento y falta de motivación para avanzar.";
+    } else if (generalSatisfactionLevel <= 7) {
+        satisfaccionDescripcion = "esto significa que tienes una base de estabilidad, aunque con áreas que podrían mejorar para alcanzar un mayor bienestar.";
+    } else {
+        satisfaccionDescripcion = "esto significa que experimentas un alto grado de plenitud y energía en tu vida diaria.";
+    }
+
+    const satisfaccionHTML = `
+        <div style="margin-top: 8mm;">
+            <h2 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Nivel de Satisfacción General Actual</h2>
+            <p style="font-size: 12px; margin-top: 2px;">Indicaste que tu nivel de satisfacción general es <b>${generalSatisfactionLevel} (${satisfaccionGeneralTexto})</b>, ${satisfaccionDescripcion}</p>
+            <p style="font-size: 12px; margin-top: 4px; font-style: italic;">¿Qué tanto hace sentido tu satisfacción general y tu rueda de la vida actual proporcionalmente?</p>
+        </div>
+    `;
+
+    const allScores = lifeAreas.map(a => a.score);
+    const allEqual = allScores.every(score => score === allScores[0]);
+    let focusAreasHTML = '';
+
+    if (allEqual) {
+        focusAreasHTML = `<h3 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Áreas que seleccionaste para aumentar tu rueda:</h3>`;
+        if (userSelectedActionAreas.length > 0) {
+            const selectedAreaLabels = userSelectedActionAreas.map(key => {
+                const area = lifeAreas.find(a => a.labelKey === key);
+                return `• ${getAreaLabel(area).join(' ')}`;
+            });
+            focusAreasHTML += `<p style="font-size: 12px; margin-top: 2px;">${selectedAreaLabels.join('<br>')}</p>`;
+        } else {
+            focusAreasHTML += `<p style="font-size: 12px; margin-top: 2px; font-style: italic;">No seleccionaste áreas específicas. Aún así, reflexionar sobre tu estado actual ya es un paso significativo.</p>`;
+        }
+    } else {
+        const sortedAreas = [...lifeAreas].sort((a, b) => a.score - b.score);
+        const lowestAreas = sortedAreas.slice(0, 2);
+        const lowestAreasText = `${getAreaLabel(lowestAreas[0]).join(' ')} (${lowestAreas[0].score}) y ${getAreaLabel(lowestAreas[1]).join(' ')} (${lowestAreas[1].score})`;
+        focusAreasHTML = `
+            <h3 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Áreas de enfoque principal:</h3>
+            <p style="font-size: 12px; margin-top: 2px;">${lowestAreasText}</p>
+        `;
+    }
+
 
     contentWrapper.innerHTML = `
         <div id="pdf-page-1" style="width: 210mm; min-height: 297mm; padding: 15mm 10mm 0 10mm; font-family: 'Open Sans', sans-serif; background:white;">
@@ -878,17 +922,17 @@ async function exportPDF() {
                     <p style="font-size: 11px; margin: 5px 0 0;">Iniciales: ${userInitials || 'N/A'} | Fecha: ${fixedDate.toLocaleDateString('es-ES')}</p>
                 </div>
             </div>
+            ${satisfaccionHTML}
             <div style="margin-top: 8mm;">
-                <h2 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Diagnóstico: <br> ${interpretationTitle}</h2>
-                <p style="font-size: 12px; margin-top: 2px;">${interpretationText}</p>
-                <br>
-                <p style="font-size: 12px; margin-top: 4px;"><b>Áreas de enfoque principal:</b> <br> ${getAreaLabel(lowestAreas[0]).join(' ')} (${lowestAreas[0].score}) y ${getAreaLabel(lowestAreas[1]).join(' ')} (${lowestAreas[1].score}).</p>
+                <h2 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Diagnóstico de tu Rueda: ${diagnostico}</h2>
+                <p style="font-size: 12px; margin-top: 2px;">${descripcionDiagnostico}</p>
             </div>
-            <br>
-            <div style="margin-top: 2mm; text-align: center;">
+             <div style="margin-top: 8mm;">
+                ${focusAreasHTML}
+            </div>
+            <div style="margin-top: 8mm; text-align: center;">
                 <h3 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Comparación de Ruedas</h3>
-                <br>
-                <div style="width: 70%; margin-left: auto; margin-right: auto;">
+                <div style="width: 70%; margin-left: auto; margin-right: auto; margin-top: 4mm;">
                     <canvas id="pdf-chart-comparison" width="360" height="360"></canvas>
                 </div>
             </div>
@@ -1447,39 +1491,59 @@ function showSummary() {
     summaryScreen.classList.remove('hidden');
     summaryScreen.classList.add('flex', 'flex-col', 'justify-center', 'items-center');
 
-    const totalScore = lifeAreas.reduce((sum, area) => sum + area.score, 0);
-    const averageScore = totalScore / lifeAreas.length;
+    const allScores = lifeAreas.map(a => a.score);
+    const allEqual = allScores.every(score => score === allScores[0]);
+    const averageScore = allScores.reduce((sum, score) => sum + score, 0) / allScores.length;
 
-    let interpretationText = '';
-    let interpretationTitle = '';
-    if (averageScore <= 3) {
-        interpretationTitle = 'Desequilibrio Fuerte';
-        interpretationText = 'Tu rueda tiene baches importantes. Es momento de hacer ajustes profundos.';
-    } else if (averageScore <= 6) {
-        interpretationTitle = 'Tensión Moderada';
-        interpretationText = 'Tu rueda avanza, pero se siente forzada. Hay áreas que necesitan atención urgente.';
-    } else if (averageScore <= 8) {
-        interpretationTitle = 'Estabilidad';
-        interpretationText = 'Tienes una base sólida. Con algunos ajustes, tu rueda puede girar con más ligereza.';
+    if (allEqual) {
+        document.getElementById('summary-interpretation').innerHTML = `
+            <div class="bg-gray-100 px-4 py-3 rounded-md text-center max-w-lg mx-auto">
+              <h3 class="text-lg font-semibold mb-1">Estabilidad en pausa</h3>
+              <p class="text-gray-700 leading-snug">
+                Tu rueda está en movimiento, pero sin evolución.<br>
+                Todas las áreas están niveladas, pero no necesariamente plenas.<br>
+                Es momento de elegir con intención dónde dar el siguiente paso.
+              </p>
+            </div>
+        `;
+        document.getElementById('summary-lowest-areas').innerHTML = `
+            <p class="text-center text-gray-700 mt-6 font-semibold leading-relaxed">
+              En este momento, todas las áreas de tu vida están al mismo nivel.<br>
+              Para que tu rueda crezca, identifica las áreas que —según tu intuición— podrían elevar tu satisfacción general si dieras un paso adelante en ellas.
+            </p>
+        `;
     } else {
-        interpretationTitle = 'Bienestar Elevado';
-        interpretationText = 'Tu rueda fluye bien. Mantén lo que funciona y enfócate en sostenerlo.';
-    }
-    
-    document.getElementById('summary-interpretation').innerHTML = `
-        <h3 class="font-bold text-lg">${interpretationTitle}</h3>
-        <p class="text-gray-600">${interpretationText}</p>
-    `;
+        let interpretationText = '';
+        let interpretationTitle = '';
+        if (averageScore <= 3) {
+            interpretationTitle = 'Desequilibrio Fuerte';
+            interpretationText = 'Tu rueda tiene baches importantes. Es momento de hacer ajustes profundos.';
+        } else if (averageScore <= 6) {
+            interpretationTitle = 'Tensión Moderada';
+            interpretationText = 'Tu rueda avanza, pero se siente forzada. Hay áreas que necesitan atención urgente.';
+        } else if (averageScore <= 8) {
+            interpretationTitle = 'Estabilidad';
+            interpretationText = 'Tienes una base sólida. Con algunos ajustes, tu rueda puede girar con más ligereza.';
+        } else {
+            interpretationTitle = 'Bienestar Elevado';
+            interpretationText = 'Tu rueda fluye bien. Mantén lo que funciona y enfócate en sostenerlo.';
+        }
+        
+        document.getElementById('summary-interpretation').innerHTML = `
+            <h3 class="font-bold text-lg">${interpretationTitle}</h3>
+            <p class="text-gray-600">${interpretationText}</p>
+        `;
 
-    const sortedAreas = [...lifeAreas].sort((a, b) => a.score - b.score);
-    const lowestAreas = sortedAreas.slice(0, 2);
-    document.getElementById('summary-lowest-areas').innerHTML = `
-        <h4 class="font-bold text-gray-700">Tus áreas con menor equilibrio hoy:</h4>
-        <p class="text-gray-600">
-            <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[0]).join(' ')}</span> (${lowestAreas[0].score}), 
-            <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[1]).join(' ')}</span> (${lowestAreas[1].score})
-        </p>
-    `;
+        const sortedAreas = [...lifeAreas].sort((a, b) => a.score - b.score);
+        const lowestAreas = sortedAreas.slice(0, 2);
+        document.getElementById('summary-lowest-areas').innerHTML = `
+            <p class="text-center text-gray-700 mt-4 font-semibold">Tus áreas con menor equilibrio hoy son…</p>
+            <p class="text-gray-600 text-center">
+                <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[0]).join(' ')}</span> (${lowestAreas[0].score}), 
+                <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[1]).join(' ')}</span> (${lowestAreas[1].score})
+            </p>
+        `;
+    }
 
     createOrUpdateChart(canvas, null, true);
     saveProgressToFirestore();
@@ -1497,6 +1561,7 @@ async function restartEvaluation() {
     userInitials = '';
     generalSatisfactionLevel = 2;
     userGender = 'neutro';
+    userSelectedActionAreas = [];
     
     // Hide all floating screens
     summaryScreen.classList.add('hidden');
@@ -1555,130 +1620,203 @@ function updateInitialSliderLabels(value) {
     }
 }
 
-// --- NEW ACTION PLAN FUNCTIONS ---
-function showActionPlan() {
-    comparisonScreen.classList.add('hidden');
-    comparisonScreen.classList.remove('flex');
-    actionPlanScreen.classList.remove('hidden');
-    actionPlanAreas.innerHTML = ''; // Clear previous content
+// --- ACTION PLAN FUNCTIONS (with collapsible sections) ---
+function createStepInput(areaIndex, stepIndex, stepText) {
+    const stepWrapper = document.createElement('div');
+    stepWrapper.className = 'flex items-center space-x-3 group';
 
-    const guideBox = document.getElementById('action-plan-guide');
-    const orangeRed = '#f9442c';
-    guideBox.style.borderColor = orangeRed;
-    guideBox.style.backgroundColor = hexToRgba(orangeRed, 0.1);
-    guideBox.style.color = orangeRed;
-    
-    goToFinalScreenBtn.style.backgroundColor = orangeRed;
-    goToFinalScreenBtn.addEventListener('mouseenter', () => goToFinalScreenBtn.style.filter = 'brightness(90%)');
-    goToFinalScreenBtn.addEventListener('mouseleave', () => goToFinalScreenBtn.style.filter = 'brightness(100%)');
+    const star = document.createElement('span');
+    star.className = 'text-2xl transition-colors';
+    star.innerHTML = (stepText && stepText.trim() !== '') ? `<span style="color: ${bestYearColor};">★</span>` : '<span class="text-gray-300">☆</span>';
 
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'w-full p-2 border-b-2 border-gray-200 focus:border-indigo-500 outline-none bg-transparent';
+    input.placeholder = `Paso ${stepIndex + 1}`;
+    input.value = stepText;
+    input.oninput = (e) => {
+        lifeAreas[areaIndex].steps[stepIndex] = e.target.value;
+        star.innerHTML = (e.target.value.trim() !== '') ? `<span style="color: ${bestYearColor};">★</span>` : '<span class="text-gray-300">☆</span>';
+        saveProgressToFirestore();
+    };
 
-    personalizarApp(); // Ensure gender-specific text is updated
-
-    lifeAreas.forEach((area, areaIndex) => {
-        // Create the main card container
-        const card = document.createElement('div');
-        card.className = 'bg-white p-6 rounded-xl shadow-md border border-gray-200';
-
-        // Card Header
-        const areaName = getAreaLabel(area).join(' ');
-        const cardHeader = `
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl text-gray-800 flex items-center">
-                    ${areaName}
-                </h3>
-                <div class="text-sm font-semibold">
-                    <span class="text-gray-500">Nivel actual: </span>
-                    <span class="text-black text-lg">${area.score}</span>
-                    <span class="text-gray-400 mx-1">/</span>
-                    <span class="text-gray-500">Deseado: </span>
-                    <span class="text-black text-lg">9</span>
-                </div>
-            </div>
-        `;
-
-        // Steps container
-        const stepsContainer = document.createElement('div');
-        stepsContainer.className = 'steps-container';
-        stepsContainer.dataset.areaIndex = areaIndex;
-
-        // Footer with "Add Step" button
-        const cardFooter = document.createElement('div');
-        cardFooter.className = 'mt-4';
-        const addStepBtn = document.createElement('button');
-        addStepBtn.className = 'text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition-colors';
-        addStepBtn.innerHTML = '<span class="text-xl leading-none">+</span> Agregar otro paso';
-        addStepBtn.onclick = () => addActionStep(areaIndex);
-        cardFooter.appendChild(addStepBtn);
-
-        // Assemble the card
-        card.innerHTML = cardHeader;
-        card.appendChild(stepsContainer);
-        card.appendChild(cardFooter);
-        actionPlanAreas.appendChild(card);
-
-        // Initial population of steps
-        populateActionSteps(areaIndex);
-    });
-
-    saveProgressToFirestore();
+    stepWrapper.appendChild(star);
+    stepWrapper.appendChild(input);
+    return stepWrapper;
 }
 
-function populateActionSteps(areaIndex) {
+function populateActionSteps(stepsListContainer, addStepBtnContainer, areaIndex) {
     const area = lifeAreas[areaIndex];
-    const container = document.querySelector(`.steps-container[data-area-index="${areaIndex}"]`);
-    if (!container) return;
-    container.innerHTML = ''; // Clear existing steps before redrawing
+    stepsListContainer.innerHTML = ''; 
 
-    if (!Array.isArray(area.steps)) area.steps = [];
-    if (area.steps.length < 3) {
-      while (area.steps.length < 3) {
-          area.steps.push("");
-      }
+    if (!Array.isArray(area.steps) || area.steps.length === 0) {
+        area.steps = [""]; 
+    }
+
+    area.steps.forEach((stepText, stepIndex) => {
+        const stepWrapper = createStepInput(areaIndex, stepIndex, stepText);
+        stepsListContainer.appendChild(stepWrapper);
+    });
+
+    const addStepBtn = document.createElement('button');
+    addStepBtn.className = 'text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition-colors';
+    addStepBtn.innerHTML = '<span class="text-xl leading-none">+</span> Agregar otro paso';
+    
+    addStepBtn.onclick = () => {
+        if (area.steps.length < 5) {
+            area.steps.push("");
+            const newStepIndex = area.steps.length - 1;
+            const stepWrapper = createStepInput(areaIndex, newStepIndex, "");
+            stepsListContainer.appendChild(stepWrapper);
+            if (area.steps.length >= 5) {
+                addStepBtn.disabled = true;
+                addStepBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+    };
+
+    if (area.steps.length >= 5) {
+        addStepBtn.disabled = true;
+        addStepBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    addStepBtnContainer.innerHTML = '';
+    addStepBtnContainer.appendChild(addStepBtn);
+}
+
+function createActionPlanCard(area, areaIndex, startCollapsed) {
+    const card = document.createElement('div');
+    card.className = 'bg-white p-4 md:p-6 rounded-xl shadow-md border border-gray-200';
+    const areaName = getAreaLabel(area).join(' ');
+
+    const header = document.createElement('div');
+    header.className = 'flex justify-between items-center cursor-pointer';
+    header.innerHTML = `
+        <h3 class="text-xl text-gray-800 flex items-center">${areaName}</h3>
+        <div class="flex items-center">
+            <div class="text-sm font-semibold mr-4 text-right">
+                <span class="text-gray-500">Actual: </span><span class="text-black text-lg">${area.score}</span>
+                <span class="text-gray-400 mx-1">/</span>
+                <span class="text-gray-500">Deseado: </span><span class="text-black text-lg">9</span>
+            </div>
+            <svg class="w-5 h-5 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </div>
+    `;
+
+    const body = document.createElement('div');
+    body.className = `mt-4 border-t pt-4 ${startCollapsed ? 'hidden' : ''}`;
+    
+    if (!startCollapsed) {
+        header.querySelector('svg').classList.add('rotate-180');
     }
     
     const question = document.createElement('p');
     question.className = 'text-gray-700 font-medium mb-3';
-    question.textContent = '¿Qué pasos puedes dar para avanzar?';
-    container.appendChild(question);
+    question.textContent = '¿Qué acciones concretas puedes dar para avanzar en esta área?';
     
-    const stepsList = document.createElement('div');
-    stepsList.className = 'space-y-3';
-    container.appendChild(stepsList);
+    const stepsListContainer = document.createElement('div');
+    stepsListContainer.className = 'space-y-3';
 
-    area.steps.forEach((stepText, stepIndex) => {
-        const stepWrapper = document.createElement('div');
-        stepWrapper.className = 'flex items-center space-x-3 group';
+    const addStepBtnContainer = document.createElement('div');
+    addStepBtnContainer.className = 'mt-4';
+    
+    populateActionSteps(stepsListContainer, addStepBtnContainer, areaIndex);
 
-        const star = document.createElement('span');
-        star.className = 'text-2xl transition-colors';
-        star.innerHTML = (stepText && stepText.trim() !== '') 
-            ? `<span style="color: ${bestYearColor};">★</span>` 
-            : '<span class="text-gray-300">☆</span>';
+    body.appendChild(question);
+    body.appendChild(stepsListContainer);
+    body.appendChild(addStepBtnContainer);
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'w-full p-2 border-b-2 border-gray-200 focus:border-indigo-500 outline-none bg-transparent';
-        input.placeholder = `Paso ${stepIndex + 1}`;
-        input.value = stepText;
-        input.oninput = (e) => {
-            lifeAreas[areaIndex].steps[stepIndex] = e.target.value;
-            star.innerHTML = (e.target.value.trim() !== '') 
-                ? `<span style="color: ${bestYearColor};">★</span>` 
-                : '<span class="text-gray-300">☆</span>';
-            saveProgressToFirestore();
-        };
-
-        stepWrapper.appendChild(star);
-        stepWrapper.appendChild(input);
-        stepsList.appendChild(stepWrapper);
+    header.addEventListener('click', () => {
+        body.classList.toggle('hidden');
+        header.querySelector('svg').classList.toggle('rotate-180');
     });
+
+    card.appendChild(header);
+    card.appendChild(body);
+    return card;
 }
 
-function addActionStep(areaIndex) {
-    lifeAreas[areaIndex].steps.push("");
-    populateActionSteps(areaIndex);
-    saveProgressToFirestore();
+
+function showActionPlan() {
+    comparisonScreen.classList.add('hidden');
+    comparisonScreen.classList.remove('flex');
+    actionPlanScreen.classList.remove('hidden');
+    actionPlanContent.innerHTML = ''; // Clear previous content
+
+    personalizarApp(); 
+
+    const allScores = lifeAreas.map(a => a.score);
+    const allEqual = allScores.every(score => score === allScores[0]);
+
+    if(allEqual) {
+        actionPlanContent.innerHTML = `
+            <p class="text-gray-700 text-center leading-relaxed">
+              Tus áreas muestran el mismo nivel actualmente.<br>
+              Eso puede ser equilibrio… o una señal de pausa.<br><br>
+              <strong>Elige las áreas que —según tu intuición— podrían elevar tu satisfacción general si dieras un paso adelante en ellas.</strong>
+            </p>
+            <label class="block text-center font-medium text-gray-700 mt-6 mb-2">Selecciona una o más áreas:</label>
+            <div id="areaSelector" class="flex flex-wrap justify-center gap-4 mt-6"></div>
+            <div id="action-plan-areas" class="mt-8 space-y-4"></div>
+        `;
+        const areaSelector = document.getElementById('areaSelector');
+        const areasContainer = document.getElementById('action-plan-areas');
+        userSelectedActionAreas = [];
+
+        lifeAreas.forEach((area, areaIndex) => {
+            const label = document.createElement('label');
+            label.className = 'flex items-center space-x-2 cursor-pointer';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'mr-1 area-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500';
+            checkbox.dataset.areaIndex = areaIndex;
+            
+            checkbox.addEventListener('change', () => {
+                areasContainer.innerHTML = ''; // Redraw selected cards
+                userSelectedActionAreas = [];
+                document.querySelectorAll('.area-checkbox:checked').forEach(c => {
+                    const idx = parseInt(c.dataset.areaIndex);
+                    const selectedArea = lifeAreas[idx];
+                    userSelectedActionAreas.push(selectedArea.labelKey);
+                    
+                    const card = createActionPlanCard(selectedArea, idx, false); // Start expanded
+                    areasContainer.appendChild(card);
+                });
+            });
+
+            label.appendChild(checkbox);
+            label.append(getAreaLabel(area).join(' '));
+            areaSelector.appendChild(label);
+        });
+    } else {
+        actionPlanContent.innerHTML = `
+            <div id="action-plan-guide" class="p-4 rounded-r-lg mb-8">
+                <h4 class="font-bold mb-2">Instrucciones:</h4>
+                <ul class="list-disc list-inside text-sm space-y-2 mt-2">
+                    <li>Recuerda la visualización que hiciste para responder las acciones.</li>
+                    <li>Expande las áreas en las que quieras trabajar y añade tus pasos.</li>
+                    <li>No tienes que rellenar todas las áreas, enfócate en lo más importante para ti ahora.</li>
+                </ul>
+            </div>
+            <div id="action-plan-areas" class="space-y-4"></div>
+        `;
+
+        const guideBox = document.getElementById('action-plan-guide');
+        const orangeRed = '#f9442c';
+        guideBox.style.borderColor = orangeRed;
+        guideBox.style.backgroundColor = hexToRgba(orangeRed, 0.1);
+        guideBox.querySelector('h4').style.color = orangeRed;
+        guideBox.querySelector('ul').style.color = '#4b5563'; // gray-600
+
+        const areasContainer = document.getElementById('action-plan-areas');
+        
+        lifeAreas.forEach((area, areaIndex) => {
+            const card = createActionPlanCard(area, areaIndex, true); // Start collapsed
+            areasContainer.appendChild(card);
+        });
+    }
 }
 
 // --- EVENT LISTENERS ---
