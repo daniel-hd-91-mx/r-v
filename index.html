@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rueda de la Vida Interactiva</title>
+   
+    <!--
+  Copyright Carlos Daniel Hernández Rivera. Todos los derechos reservados.
+-->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom styles for the application */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f4f8; /* A soft, professional background */
+        }
+        /* Custom style for the slider thumb */
+        input[type=range].satisfaction-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--thumb-color, #f9442c); /* Default color */
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        input[type=range].satisfaction-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: var(--thumb-color, #f9442c);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        /* Style for the color slider track */
+        .color-slider {
+            background: linear-gradient(to right, hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), hsl(180, 100%, 50%), hsl(240, 100%, 50%), hsl(300, 100%, 50%), hsl(360, 100%, 50%));
+        }
+        .btn-main {
+            background-color: #f9442c;
+            color: white;
+        }
+        .btn-main:hover {
+            background-color: #e03c26;
+        }
+        /* Styles for PDF generation container */
+        #pdf-content-wrapper {
+            position: absolute;
+            z-index: -9999;
+            left: -9999px;
+            top: 0;
+            width: 210mm; /* A4 width */
+            background: white;
+            color: black;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="container mx-auto p-4 max-w-6xl">
+        <div id="main-content" class="bg-white rounded-2xl shadow-xl overflow-hidden min-h-[70vh]">
+
+            <div id="interaction-panel" class="p-8 md:p-12 flex flex-col">
+                <div id="welcome-flow-container">
+                    <div id="gender-selection-screen" class="flex flex-col justify-center h-full text-center">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">Antes de arrancar...</h1>
+                        <p class="text-gray-600 mb-8 text-lg">Para personalizar tu experiencia</p>
+                        <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8">
+                            <div class="mb-6">
+                                <label for="genero" class="block mb-2 font-semibold text-lg">¿Con qué género te identificas?</label>
+                                <select id="genero" class="p-2 rounded border w-full max-w-xs mx-auto">
+                                    <option value="neutro">Prefiero no decirlo</option>
+                                    <option value="femenino">Mujer</option>
+                                    <option value="masculino">Hombre</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                            </div>
+                           <div id="genero-otro-container" class="hidden mb-6">
+                                <label for="genero_terminacion" class="block mb-2 font-semibold text-lg">¿Qué terminación prefieres?</label>
+                                <input id="genero_terminacion" type="text" class="p-2 rounded border w-full max-w-xs mx-auto" placeholder="e, @, x, etc.">
+                            </div>
+                            <button id="gender-continue-btn" class="w-full btn-main font-bold py-3 px-4 rounded-lg mt-8">Continuar</button>
+                        </div>
+                    </div>
+
+                    <div id="welcome-screen-1" class="hidden flex-col justify-center h-full text-center">
+                        <div id="logo-container-welcome" class="flex justify-left mb-8">
+                            <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 391.39 119.05" width="150px">
+                                <path d="M391.39,112.25c-.11,1.41-1.08,3.7-2.28,4.55-3.2,2.27-4.97-.99-6.09-3.5-.64-1.43-1.82-6.08-2.96-6.74-.18-.1-.33-.1-.53-.06-.85.15-4.17,4.24-5.17,5.16-1.12,1.02-4.17,3.44-5.51,3.84-5.12,1.53-6.27-2.97-6.69-6.98-.61-5.85-.39-14.27.75-20.03.3-1.54,1.6-6.47,3.23-6.83,2.78-.62,3.98,2.54,4.33,4.68.37,2.25.45,5.72.55,8.08.08,1.87-.08,3.77,0,5.64.16.19,2.78-2.02,3.15-2.24,2.4-1.46,6.59-3.39,9.3-2.17,4.07,1.83,7.85,11.84,7.94,15.91,0,.24.02.48,0,.72l-.02-.03h0Z"/>
+                                <g>
+                                <g>
+                                <polygon points="73.62 96.62 73.62 96.61 73.61 96.61 73.62 96.62"/>
+                                <path d="M100.39,38.39c-4.4-5.82-10.93-9.4-17.99-11.02-1.38-.31-3.51-.75-4.9-.85-2.66-.19-5.36.08-8.02.11-.82-3.98-1.62-8.02-3.37-11.72-2.41-5.11-7.67-9.96-12.36-13.04-.64-.41-2.93-1.94-3.44-1.87-1.32.17-6.07,3.49-7.32,4.47-6.06,4.82-9.01,10.55-10.9,17.86-.4,1.54-.58,3.13-.98,4.66-5.53-.73-11.87-1-17.19.91-3.12,1.12-6.47,3.31-8.98,5.14-1.7,1.24-3.34,2.59-4.9,4.01-.53,1.2,2.68,9.81,3.44,11.41,3.13,6.53,8.38,10.98,14.38,14.8-2.8,6.01-4.49,12.47-3.75,19.14.54,4.81,2.1,9.53,4.04,13.93,5.37.72,11.06.72,16.32-.73,5.59-1.54,10.1-5.18,14.72-8.48,3.26,3.44,7.36,6.01,11.85,7.58,3.96,1.38,7.78,1.77,11.95,2l.58-.5c0,.12-.02.35.05.41.71.45,5.74-.36,6.91-.3,5.66-9.58,6.02-22.39.02-31.86,9.77-5.98,17.5-14.56,19.84-26.06h0ZM64.94,55.08c.79,12.78-13.38,17.7-23.86,14.01-1.91-.67-1.73-1.36-3.01-2.5-.92-.83-2.25-1.44-3.23-2.28-.24-.2-1.69-1.6-1.75-1.71-.08-.14-.12-2.39-.37-3.12-.54-1.6-2.26-3.4-2.54-5.36-.4-2.82,1-5.47,1.18-8.24.62-.05.4-.04.47.36.13.79.27,1.52.49,2.28l.72-.24c-.22.75.45.75.68,1.11.76,1.24,1.22,3.96,3.07,4.11,1.43.12,1.87-2.02,1.69-3.11-.35-2.15-2.18-3.86-.75-6.15.33-.53.91-.76,1.18-1.45.49-1.26.38-3.21,1.08-4.55.7.74.6,2.06,1.08,3.11.4.9,1.14,1.73,1.91,2.34,1.57-.6,1.68-1.78,2.19-3.03.2-.49.74-1.13.81-1.6.08-.58-.05-3.42.3-3.88.46-.6,1.52-1.18,1.98-2.2,1.03-2.3-.42-4.45,1.68-6.23.52.63.5,1.56.87,2.24.43.78,1.74,1.76,2.14,2.42,1.5,2.45-1.75,5.88-.37,8.99,1.19,2.68.78,2.01,1.11,4.88.48,4.11,3.6,2.05,4.65-.57.44-1.09.27-1.97.59-3.01.35-1.13,1.51-1.98,1.7-3.22l-.02-.04c.69-.17.39.41.71.84.99,1.34,3.75,5.16,3.87,6.69s-.65,2.85-.75,4.32c-.12,1.71.4,3.17.5,4.79Z"/>
+                                </g>
+                                <path d="M186.31,38.72c-.31.27,1.61,1.7,1.91,2.04,1.75,2.01,2.93,4.74,3.13,7.41.51,6.61-2.98,12.11-9.37,14.37-5.95,2.11-15.03,2.52-21.1,0-.73-.3-3.03-1.82-3.43-1.76-2.41.36-4.45,5.14-1.45,7.12,2.02,1.34,3.63.75,5.71.75,3.7,0,7.43-.04,11.08-.08,8.85-.09,21.82-2.72,24.61,8.52,3.1,12.5-8.28,20.44-19.01,22.83-7.1,1.58-24.14,2.07-28.26-5.32-3.18-5.7,1.41-9.12,6.48-10.44,2.08-.54,2.5-.78,3.78,1.16l-1.67,1.42c-2.12,3.25.45,6.62,3.35,8.16,5.66,3,17.77,2.68,22.91-1.33,4.07-3.17,5.06-9.17-1.46-9.78-7.19-.67-15.32.54-22.52-.02-8.71-.68-14.59-8.52-12.04-17.07,1.04-3.48,3.68-5.97,6.4-8.21-3.18-3.25-3.49-8.56-2.22-12.76,3.48-11.43,20.71-12.31,30.12-8.74,3.43-2.44,8.01-6.85,12.55-4.77,5.01,2.29,1.14,6.34-1.96,8.11-2.28-1.43-4.91-1.74-7.55-1.6h0ZM175.2,59.02c.27-.58.76-4.25.81-5.08.23-3.55.23-10.33-1.41-13.46-1.19-2.29-3.64-2.88-5.32-.68-.13.17-.87,1.36-.9,1.44-1.15,3.54-.95,12.89.31,16.4.77,2.16,3.02,4.8,5.37,2.74.07-.06,1.1-1.27,1.14-1.35h0Z"/>
+                                <path d="M343.65,74.4v3.35c-7.25-.15-14.43.89-21.59,1.44l-.48-6.95c-.42-.11-.48.17-.72.36-.87.66-1.7,1.67-2.66,2.38-7.99,5.93-23.56,7.01-24.45-5.96-.06-.85-.15-3.87,0-4.51.07-.27.57-.28.72-.53h-.72c.41-7.49.24-14.99.23-22.5-.33-2.1-3.43-1.82-5.02-1.81l.24-3.12,10.68-.23c3.62-.25,7.3-.72,10.91-.61l-.72,10.98c-.91.34-.15.25-.01,1.01.07.4.1,2-.47,1.9-.04.22.35.05.42.16.34.53-.1,3.58-.09,4.43.02,2.41.28,4.84.15,7.27l-.95-.48c-.34.93.19,1.49.95.72.05,4.3-1.12,13.38,6.12,10.3.32-.14,2.55-1.58,2.68-1.73.05-.06-.07-.32,0-.42,5.04-6.62,1.75-18.12,2.69-26.02.04-.34,1.29-.83.02-.7.07-1.04-.14-2.16-1.11-2.72-1.53-.89-2.59-.34-4.13-.78l-.04-3.08,11.28-.24-.24.47.83.25-.12-.72.86-.22,9.1-.26c-.06,1.94-.28,3.97-.27,5.91,0,8.86-.32,18.72.15,27.5.05.95.27,3.89.7,4.51.12.17,1.44.64,1.58.64h3.48Z"/>
+                                <path d="M254.66,74.89v3.11h-25.66v-3.1c4.93-.09,3.87-3.06,4.08-6.6.35-5.94.52-12.23.34-18.21-.05-1.75-.06-4.93-.91-6.38-2.06-3.53-7.08-1.64-9.13,1.01-1.39,1.8-1.42,3.3-1.47,5.48-.18,7.25.37,14.61.16,21.9.13,2.53,2.54,2.52,4.52,2.79v3.1h-26.13v-3.11c1.97-.18,4.58.12,4.98-2.33.13-.82.38-2.75.42-3.53.23-4.8-.73-10.95-.14-15.6.07-.56.5-.22.5-.46.04-.22-.35-.05-.42-.16-.31-.48.07-3.98.04-4.87-.06-2.22-.27-4.44-.39-6.66-.35-1.19-3.48-1.19-4.51-1.12l.11-3.13,20.15-1.44.86,5.76c2.06-1.5,3.99-3.25,6.31-4.35,7.68-3.64,19.33-2.44,21,7.38l.13,28.61c.46,1.87,3.62,1.53,5.16,1.91h0Z"/>
+                                <path d="M382.25,34.9c-.62,5.07-1.14,10.17-.96,15.28l-2.84.5c-.59-4.17-2.91-8.57-6.65-10.73-4.45-2.56-10.39-2.11-11.11,3.88.69.28.45.91.85,1.57,1.54,2.54,12.78,5.62,16.1,7.15,4.45,2.05,7.28,5.1,7.42,10.26.5,17.89-22.79,18.24-34.93,13.62v-14.98h2.88c.68,6.3,5.33,13.25,12.12,13.88,1.83.17,3.6-.18,5.39-.24l-.23-.46c5.98-3.01,1.77-8.25-3.13-9.12l.24-.72-.89.33c-6.69-3.13-15.64-4.66-16.37-13.62-1.24-15.21,16.33-19.86,27.7-14.01l1.55-3.25,2.86.64v.02h0Z"/>
+                                <path d="M280.81,35.12c-.3,3.17-.33,6.45-.39,9.66-.12,6.68-.07,13.45.16,20.15.08,2.33-.32,5.9.34,8.05.54,1.76,3.46,1.63,4.92,1.91v3.1h-27.33v-3.12c1.59.01,5.04-.14,5.47-2.09.15-.67.26-2.49.3-3.29.47-8.86-.32-18.15-.04-27.05-.09-2.69-3.02-2.28-5.01-2.3v-3.12c7.22-.37,14.45-.81,21.59-1.91h0Z"/>
+                                <path d="M138.34,35.12l-.34,28.86c.56,1.99-.24,8.85,1.24,9.95.96.71,3.19.8,4.38.95v3.11h-2.16l-.12-.48c-.36,1.01-1.92.24-2.87.23-7.4-.1-14.82.05-22.21.14l-.23-3.01c1.14.01,2.52-.04,3.61-.35,2.89-.83,2.01-3.17,2.15-5.52.45-7.59.74-17.36.25-24.92-.04-.63-.17-2.02-.3-2.57-.41-1.72-3.61-1.33-4.99-1.37l.24-3.11c7.13-.41,14.3-.74,21.35-1.91h0Z"/>
+                                <path d="M323.61,117.17c-1.65-1.12-2.64-4.03-3.81-5.62-3.51,2.16-9.25,3-12.49-.01-6.83-6.35-4.72-18.31,3.24-22.65,4.06-2.21,7.38-2.7,11.52-.48.88.47,2.1,1.65,2.89,1.91,1.69.55,2.27-.15,3.22,2.05,1.65,3.82-.67,6.61-.62,10.18s1.65,8.09,1.15,11.43c-.33,2.22-2.84,4.73-5.11,3.19h0ZM319.4,95.03c-2.7-1.2-4.2.49-5.55,2.67-1.42,2.31-2.82,8.58,1.48,5.55,2.06-1.45,4.33-5.69,4.07-8.22h0Z"/>
+                                <path d="M278.57,114.73c-8.15-6.42-6.61-18.44,2.08-23.6,5.11-3.03,10.75-3.59,15.27.88,12.19,12.07-5.37,32.16-17.35,22.72h0ZM286.26,97.21c-.31.09-1.11.97-1.36,1.27-1.8,2.19-2.39,5.93-.68,8.34,2.22,3.14,5.59-1.13,6.27-3.48.83-2.85-.46-7.24-4.22-6.13,0,0-.01,0-.01,0Z"/>
+                                <path d="M269.64,112.83c-6.6,6.63-18.82,3.26-22.38-5.04-3.77-8.79.29-18.28,8.68-22.41,2.71-1.33,9.58-2.47,11.3.78,2.03,3.84-4.71,4.48-6.66,5.77-2.84,1.89-6.64,6.82-6.4,10.37.18,2.7,1.17,3.88,3.65,4.75,4.87,1.72,6.66-.07,11.11-.07.86,0,2.01.7,2.33,1.5.69,1.7-.55,3.25-1.64,4.35h.01Z"/>
+                                <path d="M345.65,100.35c-1.16,1.04-2.23,3.73-2.25,5.31-.02,1.66,1.25,5.32,3.32,4.99,3.39-.53,7.1-4.21,10.26-4.11,2.2.07,2.98,2.37,2.31,4.19-2.26,6.2-11.78,10.36-17.68,7.27-7.37-3.87-7.36-13.46-4.07-20.13,2.06-4.17,9.71-8.01,12.83-3.23,2.21,3.38-3.09,4.25-4.72,5.71Z"/>
+                                <path d="M276.56,28.99c-.78.51-1.09.92-2.22,1.23-5.67,1.54-10.74-1.48-10.53-7.66.21-5.99,6.26-8.7,11.48-6.72,5.22,1.98,5.97,9.44,1.92,12.96-.32.27-.56.12-.66.19h0Z"/>
+                                <path d="M128.21,15.31c5.95-.71,9.76,2.94,9.17,8.91-.37,3.67-3.54,6.05-7.08,6.35-11.3.95-11.51-14.14-2.09-15.26Z"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;" data-texto="titulo_bienvenida">Bienvenido al Diseño <br> de tu Mejor Año</h1>
+                        <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8">
+                            <p class="text-gray-600 text-lg leading-relaxed">
+                                Hoy vas a diseñar el año que realmente quieres vivir.
+                                <br><br>
+                                Para lograrlo, primero tendrás una foto honesta de tu vida actual.
+                            </p>
+                            <button id="welcome-1-next" class="w-full btn-main font-bold py-3 px-4 rounded-lg mt-8">Siguiente</button>
+                        </div>
+                    </div>
+
+                    <div id="welcome-screen-2" class="hidden flex-col justify-center h-full text-center">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4 mt-24" style="color: #f9442c;">¿Qué vas a explorar hoy?</h1>
+                        <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8 text-left">
+                            <p class="text-gray-600 text-lg leading-relaxed">
+                                Vamos a observar 8 áreas clave de tu vida:
+                                <br>
+                                Desarrollo personal, Hogar, Salud, Trabajo, Amigos, Amor, Dinero y Hobbies.
+                                <br><br>
+                                No necesitas una vida perfecta, solo honestidad contigo mismo.
+                            </p>
+                            <button id="welcome-2-next" class="w-full btn-main font-bold py-3 px-4 rounded-lg mt-8">Siguiente</button>
+                        </div>
+                    </div>
+
+                    <div id="welcome-screen-4" class="hidden flex-col justify-center h-full text-center">
+                          <h1 class="text-3xl md:text-4xl font-bold mb-4 mt-24" style="color: #f9442c;">¿Qué lograrás al terminar?</h1>
+                        <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8">
+                            <ul class="list-disc list-inside space-y-4 text-gray-600 text-lg leading-relaxed text-left">
+                                <li>Visualizarás tu Situación Actual.</li>
+                                <li>Visualizarás tu Vida en su Mejor Versión.</li>
+                                <li>Tendrás un mapa personal para avanzar hacia donde quieres estar.</li>
+                                <li>La claridad de hoy puede ser el inicio de tu transformación.</li>
+                            </ul>
+                            <button id="welcome-4-continue" class="w-full btn-main font-bold py-3 px-4 rounded-lg mt-8">Comenzar Ahora</button>
+                        </div>
+                    </div>
+
+                    <div id="welcome-screen-initials" class="hidden flex-col justify-center h-full text-center">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4 mt-24" style="color: #f9442c;">Tus Iniciales</h1>
+                        <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8">
+                            <p class="text-gray-600 mb-6 text-lg leading-relaxed">Para personalizar tu informe, por favor escribe tus iniciales.</p>
+                            <input type="text" id="initials-input" maxlength="4" class="w-full max-w-xs mx-auto text-center text-2xl p-2 border-b-2 border-gray-300 focus:border-red-400 outline-none mb-8" placeholder="Ej: J.P.">
+                            <button id="initials-continue-btn" class="w-full btn-main font-bold py-3 px-4 rounded-lg mt-8">Continuar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="initial-satisfaction-screen" class="hidden flex-col justify-center h-full">
+                    <h1 class="text-2xl md:text-3xl font-bold mb-6" style="color: #f9442c;">Mi Satisfacción de Vida</h1>
+                    
+                    <div class="mb-8">
+                          <div class="flex items-center justify-center space-x-4 mb-2">
+                            <span class="text-4xl font-bold" id="initial-slider-value">2</span>
+                        </div>
+                        <label class="font-bold text-gray-700 text-center block">¿Cuál es tu satisfacción general de vida al día de hoy?</label>
+                        <input type="range" id="initial-satisfaction-slider" min="1" max="9" value="2" class="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-4">
+                        <div id="initial-slider-numbers" class="flex justify-between text-xs text-gray-400 mt-2 px-1">
+                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1 relative h-4">
+                            <span id="word-1" class="absolute left-0">Terrible</span>
+                            <span id="word-3" class="absolute" style="left: 25%; transform: translateX(-50%);">Sobrevivencia</span>
+                            <span id="word-5" class="absolute" style="left: 50%; transform: translateX(-50%);">Estancamiento</span>
+                            <span id="word-7" class="absolute" style="left: 75%; transform: translateX(-50%);">Estabilidad</span>
+                            <span id="word-9" class="absolute right-0">Plenitud</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 mb-8">
+                        <label class="font-bold text-center block text-gray-700">¿Qué color representaría tu satisfacción actual?</label>
+                        <div class="flex items-center space-x-4 mt-4">
+                            <input type="range" id="color-slider" min="0" max="360" value="217" class="color-slider w-full h-3 rounded-lg appearance-none cursor-pointer">
+                            <div id="color-preview" class="w-12 h-12 rounded-full border-4 border-gray-200 flex-shrink-0"></div>
+                        </div>
+                    </div>
+                    
+                    <button id="continue-btn" class="w-full btn-main font-bold py-3 px-4 rounded-lg">Continuar</button>
+                </div>
+
+                <div id="welcome-screen" class="hidden">
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">Rueda de la Vida</h1>
+                    <p id="welcome-text" class="text-gray-600 mb-6"> Evalúa cada área con honestidad en una escala de 1 (desconexión total) a 9 (realización plena).</p>
+                    <button id="start-btn" class="w-full btn-main font-bold py-3 px-4 rounded-lg mt-4">Comenzar</button>
+                    <button id="back-to-satisfaction-btn" class="mt-4 text-sm text-gray-500 hover:text-gray-700">Regresar</button>
+                </div>
+
+                <div id="question-screen" class="hidden flex-grow flex flex-col justify-between">
+                    <div>
+                        <p id="area-counter" class="text-sm font-medium" style="color: #f9442c;">ÁREA 1 / 8</p>
+                        <h2 id="area-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-4"></h2>
+                        <p id="area-question" class="text-gray-600 mb-4"></p>
+                    </div>
+                    
+                    <div class="flex-grow flex flex-col justify-center">
+                        <div class="flex items-center justify-center space-x-4 mb-4">
+                            <span class="text-4xl font-bold" id="slider-value">1</span>
+                        </div>
+                        <input id="satisfaction-slider" type="range" min="1" max="9" value="1" class="satisfaction-slider w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div id="area-slider-scale" class="flex justify-between text-xs text-gray-400 mt-2 px-1"></div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span class="font-bold">Desconexión total</span>
+                            <span id="max-slider-label" class="font-bold">Realización Plena</span>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-4 text-gray-600 text-xs">
+                            <div id="low-level-desc">
+                                </div>
+                            <div id="high-level-desc" class="text-right">
+                                </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto pt-4 flex justify-between items-center">
+                        <button id="prev-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg">Anterior</button>
+                        <button id="next-btn" class="btn-main font-bold py-2 px-6 rounded-lg">Siguiente</button>
+                    </div>
+                </div>
+
+                <div id="summary-screen" class="hidden text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold mb-2" style="color: #f9442c;">Tu Rueda Actual</h1>
+                    <p id="summary-main-text" class="text-gray-600 mb-4">Esta es una fotografía honesta de cómo estás hoy.</p>
+                    
+                    <div id="summary-interpretation" class="bg-gray-100 p-3 rounded-lg mb-4 text-center">
+                        </div>
+                    
+                    <div id="summary-lowest-areas" class="mb-6">
+                        </div>
+
+                    <button id="roll-wheel-btn" class="w-full mb-4 btn-main font-bold py-3 px-4 rounded-lg">Continuar</button>
+                </div>
+            </div>
+
+            <div id="chart-panel" class="hidden p-4 md:p-8 bg-gray-50 md:flex items-center justify-center relative">
+                <canvas id="life-wheel-chart"></canvas>
+                <div id="satisfaction-display" class="hidden absolute top-4 right-4 text-right p-2 rounded-lg">
+                    <p class="text-gray-600 text-sm font-semibold">Satisfacción General</p>
+                    <p id="satisfaction-display-value" class="text-3xl font-bold"></p>
+                    <p id="satisfaction-display-word" class="text-gray-500"></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="alert-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl p-6 md:p-8 max-w-sm text-center transform transition-all duration-300 scale-95">
+            <p id="modal-message" class="text-gray-700 text-lg mb-6"></p>
+            <div id="modal-input-container" class="hidden mb-4">
+                <input type="email" id="modal-email-input" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="tu.correo@ejemplo.com">
+            </div>
+            <div id="modal-buttons" class="flex justify-center gap-4">
+                <button id="modal-confirm-btn" class="btn-main font-bold py-2 px-8 rounded-lg">Aceptar</button>
+                <button id="modal-cancel-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="journey-animation-screen" class="hidden fixed inset-0 z-50 p-4">
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4 pointer-events-none">
+            <div id="journey-text-container" class="absolute top-1/4 w-full max-w-3xl px-4">
+                 <div id="custom-journey-header-1" class="mb-6 text-3xl md:text-4xl font-bold" style="color: #2f4858; display: none;">Así es como estás rodando tu vida</div>
+                 <div id="custom-journey-subheader-1" class="text-xl md:text-2xl text-gray-200" style="color: #2f4858;"display: none;">Esta es la foto de tu momento actual.</div>
+                 <div id="custom-journey-header-2" class="mb-6 text-3xl md:text-4xl font-bold" style="color: #f9442c; display: none;">Esta es una rueda de vida enfocada y balanceada</div>
+                 <div id="custom-journey-subheader-2" class="text-xl md:text-2xl text-gray-300" style="color: #f9442c;"display: none;">Cuando tu vida está en balance, avanzas con energía y claridad.</div>
+                 <div id="custom-journey-header-3" data-texto="pregunta_cambiar_rueda" class="mb-8 text-2xl md:text-3xl font-bold" style="color: #f9442c; display: none;">¿Estás listo(a) para cambiar tu rueda?</div>
+            </div>
+        </div>
+        <div class="absolute bottom-12 left-1/2 -translate-x-1/2 pointer-events-auto">
+            <button id="custom-journey-next-btn" class="btn-main font-bold py-3 px-8 rounded-lg transition-all duration-300" style="display: none;">Siguiente</button>
+        </div>
+        <canvas id="journey-canvas"></canvas>
+    </div>
+    
+    <div id="visualization-screen" class="hidden fixed inset-0 bg-black z-50">
+        <canvas id="star-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+        <div class="relative w-full h-full flex items-start justify-center pt-20">
+            <p id="visualization-text" class="hidden text-white text-2xl font-bold text-center max-w-2xl leading-relaxed">Cierra los ojos y visualiza un futuro cercano a un año, en donde te imagines el mejor año de tu vida.</p>
+        </div>
+        <button id="final-continue-btn" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 btn-main font-bold py-3 px-6 rounded-lg">Continuar</button>
+    </div>
+
+    <div id="best-year-color-screen" class="hidden fixed inset-0 bg-gray-100 z-50 p-4 flex flex-col items-center justify-center">
+        <div class="bg-white p-8 rounded-xl shadow-lg text-center max-w-md">
+            <h1 class="text-2xl font-bold mb-4" style="color: #f9442c;">El Color de tu Mejor Año</h1>
+            <p class="text-gray-600 mb-6">Elige un color que represente la energía y la sensación de tu mejor año posible.</p>
+            <div class="flex items-center space-x-4 mt-4">
+                <input type="range" id="best-year-color-slider" min="0" max="360" value="50" class="color-slider w-full h-3 rounded-lg appearance-none cursor-pointer">
+                <div id="best-year-color-preview" class="w-12 h-12 rounded-full border-4 border-gray-200 flex-shrink-0"></div>
+            </div>
+            <button id="show-comparison-btn" class="w-full mt-8 btn-main font-bold py-3 px-4 rounded-lg">Continuar</button>
+            <button id="back-to-visualization-btn" class="w-full mt-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-4 rounded-lg">Regresar a la visualización</button>
+        </div>
+    </div>
+
+    <div id="comparison-screen" class="hidden fixed inset-0 bg-gray-100 z-50">
+        <div class="w-full h-full grid md:grid-cols-2">
+            <div class="flex flex-col items-center justify-center text-center p-8">
+                <h1 class="text-2xl md:text-4xl font-bold" style="color: #f9442c;">Compara tu Vida Actual y tu Mejor Año</h1>
+                <p class="text-lg md:text-xl mt-4 text-gray-600">Observa la diferencia entre tu momento actual y tu visión ideal.</p>
+                <div id="comparison-legend" class="mt-6 flex flex-col items-center md:items-start space-y-2">
+                    </div>
+                <button id="go-to-action-plan-btn" class="mt-8 btn-main font-bold py-3 px-6 rounded-lg">Crear mi Plan de Acción</button>
+            </div>
+            <div class="flex items-center justify-center p-4 md:p-8 bg-white">
+                <div class="relative w-full h-full max-w-2xl aspect-square">
+                    <canvas id="comparison-chart-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="action-plan-screen" class="hidden fixed inset-0 bg-gray-100 z-50 p-4 md:p-8 overflow-y-auto">
+        <div class="w-full max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-xl">
+            <h1 class="text-3xl md:text-4xl font-bold text-center mb-4" style="color: #f9442c;">Diseña el camino hacia tu bienestar integral</h1>
+            <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">Ya sabes dónde estás hoy. Ahora es momento de definir los pasos que te llevarán al equilibrio que deseas. No se trata de hacer todo de golpe, sino de comprometerte con acciones que tengan sentido para ti.</p>
+
+            <div id="action-plan-guide" class="border-l-4 p-4 rounded-r-lg mb-8">
+                <h4 class="font-bold mb-2">¿Cómo definir tus pasos?</h4>
+                <ul class="list-disc list-inside text-sm space-y-1">
+                    <li>Piensa en pequeños compromisos semanales que puedas sostener.</li>
+                    <li>Usa verbos de acción: caminar 30 minutos, apagar el celular a las 9 p.m., agendar cita médica…</li>
+                    <li><span data-texto="guia_pasos_3">Sé honesto(a): no se trata de lo ideal, sino de lo que puedes realmente hacer.</span></li>
+                </ul>
+            </div>
+
+            <div id="action-plan-areas" class="space-y-8">
+                </div>
+
+            <div class="text-center mt-10">
+                <p class="text-gray-600 italic mb-6">Cada paso que escribiste es una decisión hacia el equilibrio. <br>No necesitas tener todo resuelto, solo empezar con lo que hoy está en tus manos.</p>
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="download-pdf-btn" class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors">Descargar Informe (PDF)</button>
+                    <button id="go-to-final-screen-btn" class="w-full md:w-auto btn-main font-bold py-3 px-8 rounded-lg text-lg">Finalizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="final-congrats-screen" class="hidden fixed inset-0 bg-gray-100 z-50 p-4 md:p-8 overflow-y-auto flex flex-col items-center justify-center text-center">
+        <div id="logo-container-final" class="absolute top-8 left-8"></div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">¡Enhorabuena!</h1>
+        <div class="w-4/5 max-w-3xl mx-auto rounded-2xl p-8 mb-8">
+            <p class="text-gray-600 text-lg leading-relaxed text-left">
+                <b>Ya diste el primer paso. El cambio real depende de ti.</b>
+                <br><br>
+                No tienes que hacerlo <span data-texto="solo">solo(a)</span>: si quieres avanzar, <u>solicita una videollamada</u> y diseñemos tu ruta juntos.
+                <br><br>
+                <span class="text-sm bg-yellow-100 p-1 rounded">¿Quieres repetir la actividad? Solo recarga la página.</span>
+            </p>
+        </div>
+        <p class="absolute bottom-4 text-gray-500 text-sm">Diseñada por Daniel Hernández | Coach Profesional ICF</p>
+    </div>
+
+    <!-- Hidden container for rendering PDF content -->
+    <div id="pdf-content-wrapper"></div>
+
+<script type="module">
+// --- FIREBASE IMPORTS ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+// --- CONFIGURATION AND INITIALIZATION ---
+// Use the fixed date and time as specified
+const fixedDate = new Date('2025-06-26T15:15:00-06:00');
+
+const textos = {
+    neutro: {
+        titulo_bienvenida: "Bienvenido(a) al Diseño <br> de tu Mejor Año",
+        parado: "parado(a)",
+        solo: "solo(a)",
+        juntos: "juntos",
+        pregunta_cambiar_rueda: "¿Estás listo(a) para cambiar tu rueda?",
+        guia_pasos_3: "Sé honesto(a): no se trata de lo ideal, sino de lo que puedes realmente hacer.",
+        desarrollo_personal: ['Desarrollo', 'Personal'],
+        hogar: ['Hogar'],
+        salud: ['Salud'],
+        trabajo: ['Trabajo'],
+        amigos: ['Amigos/as'],
+        amor: ['Amor', '(Pareja/Propio)'],
+        dinero: ['Dinero'],
+        hobbies: ['Hobbies']
+    },
+    femenino: {
+        titulo_bienvenida: "Bienvenida al Diseño <br> de tu Mejor Año",
+        parado: "parada",
+        solo: "sola",
+        juntos: "juntos",
+        pregunta_cambiar_rueda: "¿Estás lista para cambiar tu rueda?",
+        guia_pasos_3: "Sé honesta: no se trata de lo ideal, sino de lo que puedes realmente hacer.",
+        desarrollo_personal: ['Desarrollo', 'Personal'],
+        hogar: ['Hogar'],
+        salud: ['Salud'],
+        trabajo: ['Trabajo'],
+        amigos: ['Amigas'],
+        amor: ['Amor', '(Pareja/Propio)'],
+        dinero: ['Dinero'],
+        hobbies: ['Hobbies']
+    },
+    masculino: {
+        titulo_bienvenida: "Bienvenido al Diseño <br> de tu Mejor Año",
+        parado: "parado",
+        solo: "solo",
+        juntos: "juntos",
+        pregunta_cambiar_rueda: "¿Estás listo para cambiar tu rueda?",
+        guia_pasos_3: "Sé honesto: no se trata de lo ideal, sino de lo que puedes realmente hacer.",
+        desarrollo_personal: ['Desarrollo', 'Personal'],
+        hogar: ['Hogar'],
+        salud: ['Salud'],
+        trabajo: ['Trabajo'],
+        amigos: ['Amigos'],
+        amor: ['Amor', '(Pareja/Propio)'],
+        dinero: ['Dinero'],
+        hobbies: ['Hobbies']
+    },
+    custom: {} // To be filled dynamically
+};
+
+// MODIFIED: Added keyStepIndex to data model
+const lifeAreas = [
+    { labelKey: 'desarrollo_personal', question: `Tiempo que dedicas a entenderte a ti mismo, a adquirir nuevos conocimientos y habilidades que te hacen evolucionar, crecer en experiencia y madurez.`, nivelBajo: ['Vida monótona y rutinaria.', 'Sensación de estancamiento.', 'Falta de novedad o crecimiento.'], nivelAlto: ['Vida rica en experiencias.', 'Desarrollo constante de habilidades.', 'Metas y proyectos con propósito.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
+    { labelKey: 'hogar', question: `Tiempo que inviertes en crear y mantener un espacio físico que te brinde refugio, paz y acogimiento. Incluye tanto el orden y la limpieza como la atmósfera del lugar.`, nivelBajo: ['Genera estrés y caos.', 'Conflictos constantes en el espacio.', 'No se siente como un refugio.'], nivelAlto: ['Es tu santuario personal.', 'Ambiente de orden y armonía.', 'Refleja tu personalidad.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
+    { labelKey: 'salud', question: `Tiempo que dedicas a cuidar activamente de tu cuerpo físico y mental. Esto abarca la calidad de tu alimentación, la frecuencia y tipo de ejercicio, tu descanso y la atención que prestas a cualquier señal o enfermedad.`, nivelBajo: ['Cansancio constante y sin energía.', 'Salud frágil y malestares frecuentes.', 'Falta de atención a tu cuerpo.'], nivelAlto: ['Lleno de energía y vitalidad.', 'Disfrutas de una rutina de ejercicio.', 'Alimentación que te nutre.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
+    { labelKey: 'trabajo', question: `Tiempo que dedicas a tu carrera profesional y a las actividades que generan tus ingresos principales. Mide tu nivel de satisfacción con tus tareas diarias, tu ambiente laboral y tu trayectoria profesional.`, nivelBajo: ['Fuente de estrés y frustración.', 'No te sientes motivado ni reconocido.', 'Ambiente laboral tóxico.'], nivelAlto: ['Alineado con tu propósito y valores.', 'Disfrutas tus responsabilidades.', 'Oportunidades de crecimiento.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
+    { labelKey: 'amigos', question: `Tiempo que inviertes en cultivar y mantener relaciones de amistad significativas y de apoyo mutuo. Se refiere a la calidad de las personas con las que te rodeas y que forman tu red de soporte social.`, nivelBajo: ['Sensación de soledad.', 'Relaciones superficiales o tóxicas.', 'Las interacciones te drenan.'], nivelAlto: ['Rodeado de personas de calidad.', 'Confianza y respaldo emocional.', 'Las relaciones te nutren y alegran.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
+    { labelKey: 'amor', question: `Tiempo que dedicas a nutrir el amor, ya sea en una relación de pareja o en la relación contigo mismo. Incluye la comunicación, la intimidad, el respeto y la autoaceptación.`, nivelBajo: ['Relación con conflicto o distancia.', 'Autocrítica e inseguridad.', 'Búsqueda de validación externa.'], nivelAlto: ['Relación de alegría y apoyo.', 'Profundo amor propio y aceptación.', 'No necesitas validación externa.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
+    { labelKey: 'dinero', question: `Tiempo que dedicas a gestionar tus finanzas y a generar los recursos económicos que necesitas. No se mide por la cantidad, sino por la sensación de tranquilidad y abundancia que experimentas con lo que tienes.`, nivelBajo: ['Preocupación constante por dinero.', 'Sensación de escasez y deudas.', 'Limita tus opciones y genera estrés.'], nivelAlto: ['Control sobre tus finanzas.', 'Ingresos suficientes y tranquilidad.', 'Sensación de abundancia.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
+    { labelKey: 'hobbies', question: `Tiempo que te permites dedicar exclusivamente para ti, para hacer aquellas actividades que disfrutas genuinamente y que no tienen otro fin más que el placer y la desconexión. Es tu tiempo de ocio y recreación.`, nivelBajo: ['Sin tiempo para ti.', 'Vida de solo obligaciones.', 'Agotamiento y pérdida de identidad.'], nivelAlto: ['Espacios definidos para tus pasiones.', 'Te recargan de energía y relajan.', 'Aportan equilibrio a tu vida.'], score: 0, isDefined: false, steps: [], keyStepIndex: null }
+];
+let currentAreaIndex = 0;
+let chart;
+let userInitials = '';
+let userGender = 'neutro';
+let userSelectedColor = '#3b82f6';
+let generalSatisfactionLevel = 2;
+let bestYearColor = '#f7d038';
+
+// Variables for animation
+let journeyAnimationId, starAnimationId, pulseInterval, ambientSound, soundLoop;
+
+// --- FIREBASE STATE ---
+let db, auth, userId, isAuthReady = false;
+
+// DOM Elements
+const mainContent = document.getElementById('main-content');
+const initialSatisfactionScreen = document.getElementById('initial-satisfaction-screen');
+const initialSatisfactionSlider = document.getElementById('initial-satisfaction-slider');
+const initialSliderValue = document.getElementById('initial-slider-value');
+const initialSliderNumbers = document.getElementById('initial-slider-numbers').children;
+const initialSliderWords = {
+    1: document.getElementById('word-1'), 3: document.getElementById('word-3'),
+    5: document.getElementById('word-5'), 7: document.getElementById('word-7'),
+    9: document.getElementById('word-9')
+};
+const colorSlider = document.getElementById('color-slider');
+const colorPreview = document.getElementById('color-preview');
+const continueBtn = document.getElementById('continue-btn');
+const welcomeScreen = document.getElementById('welcome-screen');
+const backToSatisfactionBtn = document.getElementById('back-to-satisfaction-btn');
+const questionScreen = document.getElementById('question-screen');
+const summaryScreen = document.getElementById('summary-screen');
+const startBtn = document.getElementById('start-btn');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const areaCounter = document.getElementById('area-counter');
+const areaTitle = document.getElementById('area-title');
+const areaQuestion = document.getElementById('area-question');
+const slider = document.getElementById('satisfaction-slider');
+const sliderValue = document.getElementById('slider-value');
+const areaSliderScale = document.getElementById('area-slider-scale');
+const canvas = document.getElementById('life-wheel-chart');
+const chartPanel = document.getElementById('chart-panel');
+const lowLevelDescEl = document.getElementById('low-level-desc');
+const highLevelDescEl = document.getElementById('high-level-desc');
+const alertModal = document.getElementById('alert-modal');
+const modalMessage = document.getElementById('modal-message');
+const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+const modalCancelBtn = document.getElementById('modal-cancel-btn');
+const modalInputContainer = document.getElementById('modal-input-container');
+const modalEmailInput = document.getElementById('modal-email-input');
+const rollWheelBtn = document.getElementById('roll-wheel-btn');
+const journeyAnimationScreen = document.getElementById('journey-animation-screen');
+const journeyCanvas = document.getElementById('journey-canvas');
+const visualizationScreen = document.getElementById('visualization-screen');
+const starCanvas = document.getElementById('star-canvas');
+const visualizationText = document.getElementById('visualization-text');
+const finalContinueBtn = document.getElementById('final-continue-btn');
+const comparisonScreen = document.getElementById('comparison-screen');
+const goToPlanBtn = document.getElementById('go-to-action-plan-btn');
+const comparisonLegend = document.getElementById('comparison-legend');
+const bestYearColorScreen = document.getElementById('best-year-color-screen');
+const bestYearColorSlider = document.getElementById('best-year-color-slider');
+const bestYearColorPreview = document.getElementById('best-year-color-preview');
+const showComparisonBtn = document.getElementById('show-comparison-btn');
+const backToVisualizationBtn = document.getElementById('back-to-visualization-btn');
+const satisfactionDisplay = document.getElementById('satisfaction-display');
+const satisfactionDisplayValue = document.getElementById('satisfaction-display-value');
+const satisfactionDisplayWord = document.getElementById('satisfaction-display-word');
+const actionPlanScreen = document.getElementById('action-plan-screen');
+const actionPlanAreas = document.getElementById('action-plan-areas');
+const goToFinalScreenBtn = document.getElementById('go-to-final-screen-btn');
+const downloadPdfBtn = document.getElementById('download-pdf-btn');
+const finalCongratsScreen = document.getElementById('final-congrats-screen');
+const welcomeFlowContainer = document.getElementById('welcome-flow-container');
+const genderSelectionScreen = document.getElementById('gender-selection-screen');
+const genderContinueBtn = document.getElementById('gender-continue-btn');
+const initialsScreen = document.getElementById('welcome-screen-initials');
+const initialsInput = document.getElementById('initials-input');
+const initialsContinueBtn = document.getElementById('initials-continue-btn');
+const generoSelect = document.getElementById('genero');
+const generoOtroInput = document.getElementById('genero_terminacion');
+const generoOtroContainer = document.getElementById('genero-otro-container');
+const logoContainerWelcome = document.getElementById('logo-container-welcome');
+const logoContainerFinal = document.getElementById('logo-container-final');
+
+
+// --- UTILITY FUNCTIONS ---
+function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function hslToHex(h, s, l) {
+    l /= 100;
+    const a = s * Math.min(l, 1 - l) / 100;
+    const f = n => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+function getSatisfactionWord(level) {
+    if (level <= 1) return 'Terrible';
+    if (level <= 3) return 'Sobrevivencia';
+    if (level <= 5) return 'Estancamiento';
+    if (level <= 7) return 'Estabilidad';
+    return 'Plenitud'; // For 8 and 9
+}
+
+// --- FIREBASE DATA PERSISTENCE ---
+async function saveProgressToFirestore() {
+    if (!isAuthReady || !db || !userId) {
+        console.error("Firebase not ready for saving.");
+        return;
+    }
+    try {
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const docRef = doc(db, 'artifacts', appId, 'users', userId, 'lifeWheelData', 'progress');
+        const progress = {
+            areas: lifeAreas.map(a => ({
+                score: a.score,
+                isDefined: a.isDefined,
+                steps: a.steps || [],
+                keyStepIndex: a.keyStepIndex === undefined ? null : a.keyStepIndex
+            })),
+            general: generalSatisfactionLevel,
+            color: userSelectedColor,
+            bestColor: bestYearColor,
+            initials: userInitials,
+            gender: userGender,
+            genderTermination: userGender === 'custom' ? generoOtroInput.value.trim() : null,
+            lastUpdated: new Date().toISOString()
+        };
+        await setDoc(docRef, progress, { merge: true });
+    } catch (e) {
+        console.error("Error saving progress to Firestore:", e);
+    }
+}
+
+async function loadProgressFromFirestore() {
+    if (!isAuthReady || !db || !userId) {
+        console.error("Firebase not ready for loading.");
+        return false;
+    }
+    try {
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const docRef = doc(db, 'artifacts', appId, 'users', userId, 'lifeWheelData', 'progress');
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) return false;
+        
+        const saved = docSnap.data();
+        if (!saved || !saved.areas) return false;
+
+        saved.areas.forEach((savedArea, i) => {
+            if (lifeAreas[i]) {
+                lifeAreas[i].score = savedArea.score;
+                lifeAreas[i].isDefined = savedArea.isDefined;
+                lifeAreas[i].steps = savedArea.steps || [];
+                lifeAreas[i].keyStepIndex = savedArea.keyStepIndex === undefined ? null : savedArea.keyStepIndex;
+            }
+        });
+        generalSatisfactionLevel = saved.general || 2;
+        if (generalSatisfactionLevel < 1) generalSatisfactionLevel = 1;
+        if (generalSatisfactionLevel > 9) generalSatisfactionLevel = 9;
+
+        userSelectedColor = saved.color || '#3b82f6';
+        bestYearColor = saved.bestColor || '#f7d038';
+        userInitials = saved.initials || '';
+        userGender = saved.gender || 'neutro';
+        
+        if (userGender === 'custom' || saved.gender === 'otro') {
+             crearTextosCustom(saved.genderTermination || 'e');
+             userGender = 'custom'; // Standardize to 'custom'
+        }
+
+        return true;
+    } catch (e) {
+        console.error("Error loading progress from Firestore:", e);
+        return false;
+    }
+}
+
+async function clearProgressInFirestore() {
+    if (!isAuthReady || !db || !userId) {
+        console.error("Firebase not ready for clearing.");
+        return;
+    }
+    try {
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const docRef = doc(db, 'artifacts', appId, 'users', userId, 'lifeWheelData', 'progress');
+        await deleteDoc(docRef);
+    } catch (e) {
+        console.error("Error clearing progress in Firestore:", e);
+    }
+}
+
+function crearTextosCustom(terminacion) {
+    if (!terminacion) terminacion = 'e';
+    textos.custom = {
+        titulo_bienvenida: `Bienvenid${terminacion} al Diseño <br> de tu Mejor Año`,
+        parado: `parad${terminacion}`,
+        solo: `sol${terminacion}`,
+        juntos: "juntos",
+        pregunta_cambiar_rueda: `¿Estás list${terminacion} para cambiar tu rueda?`,
+        guia_pasos_3: `Sé honest${terminacion}: no se trata de lo ideal, sino de lo que puedes realmente hacer.`,
+        desarrollo_personal: ['Desarrollo', 'Personal'],
+        hogar: ['Hogar'],
+        salud: ['Salud'],
+        trabajo: ['Trabajo'],
+        amigos: [`Amig${terminacion}s`],
+        amor: ['Amor', '(Pareja/Propio)'],
+        dinero: ['Dinero'],
+        hobbies: ['Hobbies']
+    };
+}
+
+function personalizarApp() {
+    const genero = userGender === 'otro' || userGender === 'custom' ? 'custom' : userGender;
+    const textosGenero = textos[genero] || textos.neutro;
+    
+    document.querySelectorAll('[data-texto]').forEach(function(el) {
+        const key = el.getAttribute('data-texto');
+        if(textosGenero[key]) {
+            if (el.tagName === 'SPAN') {
+                 el.textContent = textosGenero[key];
+            } else {
+                 el.innerHTML = textosGenero[key];
+            }
+        }
+    });
+}
+
+function getAreaLabel(area) {
+    const genero = userGender === 'otro' || userGender === 'custom' ? 'custom' : userGender;
+    const textosGenero = textos[genero] || textos.neutro;
+    return textosGenero[area.labelKey] || [area.labelKey.replace('_', ' ')];
+}
+
+// --- CHART LOGIC (CHART.JS) ---
+function createOrUpdateChart(targetCanvas, activeIndex, showAllLabels, customData, customOptions = {}) {
+    if (!targetCanvas) return;
+    Chart.register(ChartDataLabels);
+
+    const defaultData = {
+        labels: lifeAreas.map(area => getAreaLabel(area)),
+        datasets: [{
+            label: 'Nivel de Satisfacción',
+            data: lifeAreas.map(area => area.score),
+            fill: true,
+            backgroundColor: hexToRgba(userSelectedColor, 0.4),
+            borderColor: userSelectedColor,
+            pointBackgroundColor: userSelectedColor,
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: userSelectedColor,
+            datalabels: {
+                color: '#ffffff',
+                backgroundColor: hexToRgba(userSelectedColor, 0.8),
+                borderRadius: 4,
+                font: { weight: 'bold' },
+                padding: 4,
+                display: (context) => showAllLabels,
+            }
+        }]
+    };
+
+    const data = customData ? { labels: lifeAreas.map(area => getAreaLabel(area)), datasets: customData } : defaultData;
+
+    const defaultOptions = {
+        maintainAspectRatio: false,
+        scales: {
+            r: {
+                angleLines: { display: true, color: 'rgba(0, 0, 0, 0.1)' },
+                suggestedMin: 0,
+                suggestedMax: 9,
+                pointLabels: { 
+                    font: (context) => ({
+                        size: window.innerWidth < 768 ? 10 : 12,
+                        weight: context.index === activeIndex || showAllLabels ? 'bold' : '500'
+                    }),
+                    color: (context) => (context.index === activeIndex || showAllLabels) ? '#000000' : '#6b7280'
+                },
+                grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                ticks: { display: false, stepSize: 1, max: 9, min: 0 }
+            }
+        },
+        plugins: { 
+            legend: { display: false },
+            tooltip: { enabled: true },
+            datalabels: { display: false }
+        }
+    };
+    
+    const config = {
+        type: 'radar',
+        data: data,
+        options: { ...defaultOptions, ...customOptions }
+    };
+
+    if (targetCanvas.chart) {
+        targetCanvas.chart.destroy();
+    }
+    targetCanvas.chart = new Chart(targetCanvas, config);
+}
+
+// --- MODAL LOGIC ---
+let modalCallback = null;
+function showModal(message, type = 'alert', placeholder = '') {
+    modalMessage.textContent = message;
+    modalInputContainer.style.display = 'none';
+    
+    if (type === 'confirm') {
+        modalConfirmBtn.style.display = 'inline-block';
+        modalCancelBtn.style.display = 'inline-block';
+        modalConfirmBtn.textContent = 'Aceptar';
+    } else if (type === 'prompt') {
+        modalInputContainer.style.display = 'block';
+        modalEmailInput.value = '';
+        modalEmailInput.placeholder = placeholder;
+        modalConfirmBtn.style.display = 'inline-block';
+        modalCancelBtn.style.display = 'inline-block';
+        modalConfirmBtn.textContent = 'Enviar';
+    } else { // alert
+        modalConfirmBtn.style.display = 'inline-block';
+        modalCancelBtn.style.display = 'none';
+        modalConfirmBtn.textContent = 'Entendido';
+    }
+
+    alertModal.classList.remove('hidden');
+    setTimeout(() => {
+        alertModal.classList.remove('opacity-0');
+        alertModal.querySelector('div').classList.remove('scale-95');
+    }, 10);
+
+    return new Promise((resolve) => {
+        modalCallback = resolve;
+    });
+}
+
+function hideModal() {
+    alertModal.classList.add('opacity-0');
+    alertModal.querySelector('div').classList.add('scale-95');
+    setTimeout(() => {
+        alertModal.classList.add('hidden');
+    }, 300); 
+}
+
+modalConfirmBtn.addEventListener('click', () => {
+    const inputValue = modalEmailInput.style.display === 'block' ? modalEmailInput.value : true;
+    if (modalCallback) modalCallback(inputValue);
+    hideModal();
+});
+
+modalCancelBtn.addEventListener('click', () => {
+    if (modalCallback) modalCallback(false);
+    hideModal();
+});
+
+// --- PDF EXPORT LOGIC (REWRITTEN) ---
+async function exportPDF() {
+    if (!window.jspdf || !window.html2canvas) {
+        showModal("No se pudieron cargar las librerías para generar el PDF. Intenta recargar la página.", "alert");
+        return;
+    }
+
+    showModal('Generando tu informe PDF, por favor espera...', 'alert');
+    await new Promise(resolve => setTimeout(resolve, 100)); // Allow modal to show
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const contentWrapper = document.getElementById('pdf-content-wrapper');
+
+    // ---- 1. Primera página: logo, interpretación y gráfica ----
+    const logoHTML = logoContainerWelcome.innerHTML;
+    const averageScore = lifeAreas.reduce((sum, area) => sum + area.score, 0) / lifeAreas.length;
+    let interpretationTitle = '';
+    let interpretationText = '';
+    if (averageScore <= 3) {
+        interpretationTitle = 'Desequilibrio Fuerte';
+        interpretationText = 'Tu rueda tiene baches importantes. Es momento de hacer ajustes profundos.';
+    } else if (averageScore <= 6) {
+        interpretationTitle = 'Tensión Moderada';
+        interpretationText = 'Tu rueda avanza, pero se siente forzada. Hay áreas que necesitan atención urgente.';
+    } else if (averageScore <= 8) {
+        interpretationTitle = 'Estabilidad';
+        interpretationText = 'Tienes una base sólida. Con algunos ajustes, tu rueda puede girar con más ligereza.';
+    } else {
+        interpretationTitle = 'Bienestar Elevado';
+        interpretationText = 'Tu rueda fluye bien. Mantén lo que funciona y enfócate en sostenerlo.';
+    }
+    const sortedAreas = [...lifeAreas].sort((a, b) => a.score - b.score);
+    const lowestAreas = sortedAreas.slice(0, 2);
+
+    contentWrapper.innerHTML = `
+        <div id="pdf-page-1" style="width: 210mm; min-height: 297mm; padding: 15mm 10mm 0 10mm; font-family: 'Montserrat', sans-serif; background:white;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #ccc; padding-bottom: 5mm;">
+                <div style="width: 80px;">${logoHTML}</div>
+                <div style="text-align: right;">
+                    <h1 style="font-size: 22px; color: #f9442c; margin: 0;">Informe de la Rueda de la Vida</h1>
+                    <p style="font-size: 11px; margin: 5px 0 0;">Iniciales: ${userInitials || 'N/A'} | Fecha: ${fixedDate.toLocaleDateString('es-ES')}</p>
+                </div>
+            </div>
+            <div style="margin-top: 8mm;">
+                <h2 style="font-size: 15px; font-weight: bold;">Diagnóstico: ${interpretationTitle}</h2>
+                <p style="font-size: 12px; margin-top: 2px;">${interpretationText}</p>
+                <p style="font-size: 12px; margin-top: 4px;"><b>Áreas de enfoque principal:</b> ${getAreaLabel(lowestAreas[0]).join(' ')} (${lowestAreas[0].score}) y ${getAreaLabel(lowestAreas[1]).join(' ')} (${lowestAreas[1].score}).</p>
+            </div>
+            <div style="margin-top: 40px; text-align: center;">
+                <h3 style="font-size: 15px; font-weight: bold;">Comparación de Ruedas</h3>
+                <canvas id="pdf-chart-comparison" width="60%" height="60%"></canvas>
+            </div>
+        </div>
+    `;
+
+    // Renderiza la gráfica de comparación
+    const idealData = new Array(lifeAreas.length).fill(9);
+    const actualData = lifeAreas.map(area => area.score);
+    const comparisonDatasets = [
+        { label: 'Mejor Año Posible', data: idealData, fill: true, backgroundColor: hexToRgba(bestYearColor, 0.3), borderColor: bestYearColor, pointBackgroundColor: 'transparent', pointBorderColor: 'transparent', datalabels: { display: false } },
+        { label: 'Tu Rueda Actual', data: actualData, fill: true, backgroundColor: hexToRgba(userSelectedColor, 1.0), borderColor: userSelectedColor, pointBackgroundColor: userSelectedColor, pointBorderColor: '#fff', datalabels: { color: '#fff', backgroundColor: hexToRgba(userSelectedColor, 1.0), borderRadius: 4, font: { weight: 'bold' }, padding: 4, display: true } }
+    ];
+    createOrUpdateChart(document.getElementById('pdf-chart-comparison'), null, true, comparisonDatasets);
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Toma screenshot de la primera página
+    const page1Node = document.getElementById('pdf-page-1');
+    const page1Canvas = await html2canvas(page1Node, { scale: 2, useCORS: true, backgroundColor: null });
+    const page1ImgData = page1Canvas.toDataURL('image/png');
+    const page1Aspect = page1Canvas.height / page1Canvas.width;
+    const page1ImgHeight = pdfWidth * page1Aspect;
+    pdf.addImage(page1ImgData, 'PNG', 0, 0, pdfWidth, page1ImgHeight);
+
+    // ---- 2. Segunda página: plan de acción ----
+    let actionPlanHTML = '';
+    lifeAreas.forEach(area => {
+        const steps = area.steps.filter(s => s && s.trim() !== '');
+        if (steps.length > 0) {
+            actionPlanHTML += `
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+                    <h4 style="font-size: 13px; font-weight: bold;">${getAreaLabel(area).join(' ')} (Nivel: ${area.score}/9)</h4>
+                    <ul style="list-style-position: inside; padding-left: 10px; font-size: 11px;">
+                        ${steps.map(step => `<li>${step}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+    });
+
+    if(actionPlanHTML) {
+        const targetDate = new Date(fixedDate);
+        targetDate.setFullYear(targetDate.getFullYear() + 1);
+        const formattedTargetDate = targetDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        contentWrapper.innerHTML = `
+            <div id="pdf-page-2" style="width: 210mm; min-height: 297mm; padding: 18mm 10mm 10mm 10mm; font-family: 'Montserrat', sans-serif; background:white;">
+                <h2 style="font-size: 16px; font-weight: bold; color: #f9442c; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Mi Plan de Acción</h2>
+                <p style="font-size: 11px; font-style: italic; margin-top: 4px;">Fecha objetivo para alcanzar este plan: ${formattedTargetDate}</p>
+                <div style="margin-top: 5mm;">
+                    ${actionPlanHTML}
+                </div>
+            </div>
+        `;
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // Toma screenshot de la segunda página
+        const page2Node = document.getElementById('pdf-page-2');
+        const page2Canvas = await html2canvas(page2Node, { scale: 2, useCORS: true, backgroundColor: null });
+        const page2ImgData = page2Canvas.toDataURL('image/png');
+        const page2Aspect = page2Canvas.height / page2Canvas.width;
+        const page2ImgHeight = pdfWidth * page2Aspect;
+
+        // Nueva página y agrega la imagen
+        pdf.addPage();
+        pdf.addImage(page2ImgData, 'PNG', 0, 0, pdfWidth, page2ImgHeight);
+    }
+
+    // Descarga
+    pdf.save(`Informe-Rueda-de-la-Vida-${userInitials || 'Usuario'}.pdf`);
+    contentWrapper.innerHTML = ''; // Limpia
+    hideModal();
+}
+
+// --- ANIMATION LOGIC ---
+const starPath = new Path2D("M127.85,57.41c-8.7-10.83-23.46-15.79-37.1-13.74-1.24-6.61-2.8-13.55-6.9-19.01-4.06-5.41-10.07-9.91-15.92-13.22-5.86,3.31-11.87,7.81-15.92,13.22-4.1,5.46-5.66,12.4-6.9,19.01-13.64-2.05-28.4,2.91-37.1,13.74,3.43,13.37,11.99,24.41,23.85,31.2-7.16,11.57-6.88,26.69,0,38.32,13.27,1.53,27-.53,36.07-11.2,9.07,10.66,22.8,12.72,36.07,11.2,6.88-11.63,7.16-26.75,0-38.32,11.86-6.8,20.42-17.83,23.85-31.2Z");
+function drawCustomStar(ctx, cx, cy, scale, opacity = 1) {
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+    ctx.translate(-72.5, -75.46); 
+    ctx.strokeStyle = 'transparent';
+    ctx.fillStyle = '#f7d038';
+    ctx.fill(starPath);
+    ctx.restore();
+}
+
+function drawWheelShape(ctx, scores, centerX, centerY, rotation, maxRadius, getRadiusAtAngle, color) {
+    ctx.save();
+    ctx.translate(centerX, centerY); // Mueve el origen al centro de la rueda
+    ctx.rotate(rotation); // Rota el canvas
+
+    ctx.beginPath();
+    for (let i = 0; i <= scores.length; i++) {
+        const index = i % scores.length;
+        const angle = (index / scores.length) * 2 * Math.PI - (Math.PI / 2);
+        // Calcula el radio para este ángulo, interpolando entre puntos
+        const radius = getRadiusAtAngle(angle);
+        
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
+        
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    
+    // Dibuja el polígono
+    const fillColor = color || userSelectedColor;
+    ctx.fillStyle = hexToRgba(fillColor, 1);
+    ctx.strokeStyle = fillColor;
+    ctx.lineWidth = 3;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+}
+
+function startJourneyAnimation() {
+    journeyAnimationScreen.classList.remove('hidden');
+    
+    const header1 = document.getElementById('custom-journey-header-1');
+    const subheader1 = document.getElementById('custom-journey-subheader-1');
+    const header2 = document.getElementById('custom-journey-header-2');
+    const subheader2 = document.getElementById('custom-journey-subheader-2');
+    const header3 = document.getElementById('custom-journey-header-3');
+    const journeyNextBtn = document.getElementById('custom-journey-next-btn');
+
+    header1.style.display = 'block';
+    subheader1.style.display = 'block';
+    header2.style.display = 'none';
+    subheader2.style.display = 'none';
+    header3.style.display = 'none';
+    journeyNextBtn.style.display = 'none';
+
+    const ctx = journeyCanvas.getContext('2d');
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    journeyCanvas.width = w;
+    journeyCanvas.height = h;
+
+    const userScores = lifeAreas.map(area => area.score);
+    const averageScore = userScores.reduce((a, b) => a + b, 0) / userScores.length;
+    const maxRadius = Math.min(w, h) * 0.15; // Radio máximo de la rueda
+    const groundHeight = h * 0.15; // Altura del "suelo"
+    const endX = w - 80 - maxRadius;
+
+    let wheelX = -maxRadius; // Posición X inicial
+    let rotation = 0; // Rotación inicial
+
+    const idealScores = new Array(lifeAreas.length).fill(9);
+    let idealWheelX = -maxRadius;
+    let idealRotation = 0;
+    const idealWheelColor = '#FF4500'; // Orange-red
+
+    const map_range = (value, low1, high1, low2, high2) => low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+    let targetLinearSpeed;
+    if (averageScore <= 5) {
+        targetLinearSpeed = map_range(averageScore, 1, 5, 0.6, 1.2);
+    } else {
+        targetLinearSpeed = map_range(averageScore, 5, 9, 1.2, 2.5);
+    }
+    
+    const getRadiusAtAngle = (scores) => (angle) => {
+        const normAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+        const anglePerSegment = (2 * Math.PI) / scores.length;
+        const segmentIndex = Math.floor(normAngle / anglePerSegment);
+        const nextSegmentIndex = (segmentIndex + 1) % scores.length;
+        const angleInSegment = normAngle - (segmentIndex * anglePerSegment);
+        const progressInSegment = angleInSegment / anglePerSegment;
+        const startScore = scores[segmentIndex] < 1 ? 1 : scores[segmentIndex];
+        const endScore = scores[nextSegmentIndex] < 1 ? 1 : scores[nextSegmentIndex];
+        const interpolatedScore = startScore + (endScore - startScore) * progressInSegment;
+        return (interpolatedScore / 9) * maxRadius;
+    };
+    
+    const getLowestPointY = (rot, scores) => {
+        let lowestY = -Infinity;
+        const numCheckPoints = 360; 
+        const getRadius = getRadiusAtAngle(scores);
+        for (let i = 0; i < numCheckPoints; i++) {
+            const pointAngleOnWheel = (i / numCheckPoints) * 2 * Math.PI;
+            const radius = getRadius(pointAngleOnWheel);
+            const currentWorldAngle = pointAngleOnWheel + rot;
+            const yPos = radius * Math.sin(currentWorldAngle);
+            if (yPos > lowestY) {
+                lowestY = yPos;
+            }
+        }
+        return lowestY;
+    };
+
+    function animateUserWheel() {
+        let finished = false;
+        if (wheelX < endX) {
+            const scoreDiff = Math.abs(userScores[Math.floor(rotation / (2 * Math.PI / userScores.length)) % userScores.length] - userScores[(Math.floor(rotation / (2 * Math.PI / userScores.length)) + 1) % userScores.length]);
+            const steepnessPenalty = 1 - Math.pow(scoreDiff / 9, 2) * 0.98;
+            const distanceMoved = targetLinearSpeed * steepnessPenalty;
+            wheelX += distanceMoved;
+            const radiusAtContact = getRadiusAtAngle(userScores)(rotation + Math.PI / 2);
+            if (radiusAtContact > 0) {
+                rotation += distanceMoved / radiusAtContact;
+            }
+        } else {
+            finished = true;
+        }
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#fffcf8';
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, h - groundHeight, w, groundHeight);
+        drawCustomStar(ctx, w - 80, h - groundHeight - 80, 0.8);
+        const userWheelY = h - groundHeight - getLowestPointY(rotation, userScores);
+        drawWheelShape(ctx, userScores, Math.min(wheelX, endX), userWheelY, rotation, maxRadius, getRadiusAtAngle(userScores), userSelectedColor);
+        
+        if (!finished) {
+            journeyAnimationId = requestAnimationFrame(animateUserWheel);
+        } else {
+            setTimeout(() => {
+                header1.style.display = 'none';
+                subheader1.style.display = 'none';
+                header2.style.display = 'block';
+                subheader2.style.display = 'block';
+                
+                setTimeout(() => {
+                    animateIdealWheel();
+                }, 4000); 
+            }, 1000); 
+        }
+    }
+
+    function animateIdealWheel() {
+        idealWheelX = -maxRadius;
+        idealRotation = 0;
+
+        function step() {
+            let finished = false;
+            if (idealWheelX < endX) {
+                const delta = 3.2;
+                idealWheelX += delta;
+                idealRotation += delta / (maxRadius * 0.97);
+            } else {
+                finished = true;
+            }
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = '#fffcf8';
+            ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, h - groundHeight, w, groundHeight);
+            drawCustomStar(ctx, w - 80, h - groundHeight - 80, 0.8);
+            const idealWheelY = h - groundHeight - getLowestPointY(idealRotation, idealScores);
+            drawWheelShape(ctx, idealScores, Math.min(idealWheelX, endX), idealWheelY, idealRotation, maxRadius, getRadiusAtAngle(idealScores), idealWheelColor);
+
+            if (!finished) {
+                journeyAnimationId = requestAnimationFrame(step);
+            } else {
+                setTimeout(() => {
+                    header2.style.display = 'none';
+                    subheader2.style.display = 'none';
+                    header3.style.display = 'block';
+                    journeyNextBtn.style.display = 'block';
+                }, 4000); 
+            }
+        }
+        step();
+    }
+
+    journeyNextBtn.onclick = function() {
+        journeyAnimationScreen.classList.add('hidden');
+        startBestYearAnimation();
+    };
+
+    animateUserWheel();
+}
+
+function startBestYearAnimation() {
+    stopBestYearAnimation(); 
+    visualizationScreen.classList.remove('hidden');
+    visualizationText.classList.remove('hidden');
+    finalContinueBtn.classList.add('hidden');
+
+    if (Tone.context.state !== 'running') {
+        Tone.start();
+    }
+    const reverb = new Tone.Reverb(4).toDestination();
+    ambientSound = new Tone.Synth({
+        oscillator: { type: 'sine' },
+        envelope: { attack: 0.01, decay: 0.5, sustain: 0.1, release: 2 }
+    }).connect(reverb);
+    
+    soundLoop = new Tone.Loop(time => {
+        if (ambientSound) {
+            ambientSound.triggerAttackRelease("C3", "2n", time);
+        }
+    }, "1n").start(0);
+
+    if (Tone.Transport.state !== 'started') {
+        Tone.Transport.start();
+    }
+    
+    const ctx = starCanvas.getContext('2d');
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    starCanvas.width = w;
+    starCanvas.height = h;
+
+    const pulses = [];
+    let hue = 45; 
+
+    function createPulse() {
+        pulses.push({
+            scale: 0.1,
+            maxScale: Math.max(w, h) / 80, 
+            opacity: 1.0, 
+            color: `hsl(${hue}, 100%, 70%)`
+        });
+        hue = (hue + 20) % 360;
+    }
+
+    let pulseTimeout = setTimeout(() => {
+        pulseInterval = setInterval(createPulse, 500);
+    }, 7000);
+
+    function animateStar() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)'; 
+        ctx.fillRect(0, 0, w, h);
+
+        drawCustomStar(ctx, w/2, h/2, 1.2);
+
+        for (let i = pulses.length - 1; i >= 0; i--) {
+            const p = pulses[i];
+            p.scale += p.maxScale / 120;
+            p.opacity = 1.0 - (p.scale / p.maxScale);
+
+            if (p.opacity <= 0) {
+                pulses.splice(i, 1);
+                continue;
+            }
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter'; 
+            ctx.filter = `blur(${p.scale * 2}px)`;
+            ctx.globalAlpha = p.opacity;
+            ctx.translate(w/2, h/2);
+            ctx.scale(p.scale, p.scale);
+            ctx.translate(-72.5, -75.46);
+            ctx.fillStyle = p.color;
+            ctx.fill(starPath);
+            ctx.restore();
+        }
+
+        starAnimationId = requestAnimationFrame(animateStar);
+    }
+    
+    animateStar();
+    
+    setTimeout(() => {
+        finalContinueBtn.classList.remove('hidden');
+    }, 15000);
+}
+
+function stopBestYearAnimation(showComparison = false) {
+    if (soundLoop) {
+        soundLoop.stop(0).dispose();
+        soundLoop = null;
+    }
+    if (Tone.Transport.state === 'started') {
+        Tone.Transport.stop();
+        Tone.Transport.cancel();
+    }
+    if(ambientSound) {
+        ambientSound.dispose();
+        ambientSound = null;
+    }
+    if (pulseInterval) clearInterval(pulseInterval);
+    if (starAnimationId) cancelAnimationFrame(starAnimationId);
+    
+    visualizationScreen.classList.add('hidden');
+    if (showComparison) {
+        bestYearColorScreen.classList.remove('hidden');
+    }
+}
+
+// --- SCREEN NAVIGATION & LOGIC ---
+function showFinalComparison() {
+    bestYearColorScreen.classList.add('hidden');
+    comparisonScreen.classList.remove('hidden');
+    
+    const comparisonCanvas = document.getElementById('comparison-chart-canvas');
+    
+    const idealData = new Array(lifeAreas.length).fill(9);
+    const actualData = lifeAreas.map(area => area.score);
+
+    const datasets = [
+        {
+            label: 'Mejor Año Posible (Nivel 9)',
+            data: idealData,
+            fill: true,
+            backgroundColor: hexToRgba(bestYearColor, 0.3),
+            borderColor: bestYearColor,
+            pointBackgroundColor: 'transparent',
+            pointBorderColor: 'transparent',
+            datalabels: { display: false }
+        },
+        {
+            label: 'Tu Rueda Actual',
+            data: actualData,
+            fill: true,
+            backgroundColor: hexToRgba(userSelectedColor, 1.0), // Fully opaque
+            borderColor: userSelectedColor,
+            pointBackgroundColor: userSelectedColor,
+            pointBorderColor: '#fff',
+            datalabels: {
+                color: '#ffffff',
+                backgroundColor: hexToRgba(userSelectedColor, 1.0), // Fully opaque
+                borderRadius: 4,
+                font: { weight: 'bold' },
+                padding: 4,
+                display: true
+            }
+        }
+    ];
+
+    createOrUpdateChart(comparisonCanvas, null, true, datasets);
+    
+    comparisonLegend.innerHTML = `
+        <div class="flex items-center">
+            <div class="w-4 h-4 rounded-full mr-2" style="background-color: ${bestYearColor};"></div>
+            <span class="text-gray-700">Mejor Año Posible (Nivel 9)</span>
+        </div>
+        <div class="flex items-center">
+            <div class="w-4 h-4 rounded-full mr-2" style="background-color: ${userSelectedColor};"></div>
+            <span class="text-gray-700">Tu Rueda Actual</span>
+        </div>
+    `;
+    saveProgressToFirestore();
+}
+
+function showQuestion(index) {
+    const area = lifeAreas[index];
+    const label = getAreaLabel(area);
+    areaCounter.textContent = `ÁREA ${index + 1} / ${lifeAreas.length}`;
+    areaTitle.textContent = Array.isArray(label) ? label.join(' ') : label;
+    areaQuestion.innerHTML = area.question; 
+    
+    lowLevelDescEl.innerHTML = `<ul class='list-disc list-inside text-xs mt-1 space-y-1 text-gray-600'>${area.nivelBajo.map(item => `<li>${item}</li>`).join('')}</ul>`;
+    highLevelDescEl.innerHTML = `<ul class='list-disc list-inside text-xs mt-1 space-y-1 text-gray-600'>${area.nivelAlto.map(item => `<li>${item}</li>`).join('')}</ul>`;
+
+    let currentScore = area.score || 1;
+    slider.value = currentScore;
+    sliderValue.textContent = currentScore;
+    sliderValue.style.color = userSelectedColor;
+    
+    updateSliderFill(slider);
+
+    prevBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
+    nextBtn.textContent = index === lifeAreas.length - 1 ? 'Finalizar' : 'Siguiente';
+    
+    areaSliderScale.innerHTML = '';
+    for(let i=1; i <= 9; i++){
+        const span = document.createElement('span');
+        span.textContent = i;
+        areaSliderScale.appendChild(span);
+    }
+    
+    createOrUpdateChart(canvas, index, false);
+}
+
+function startEvaluation() {
+    welcomeScreen.classList.add('hidden');
+    questionScreen.classList.remove('hidden');
+    questionScreen.classList.add('flex');
+    
+    satisfactionDisplayValue.textContent = generalSatisfactionLevel;
+    satisfactionDisplayValue.style.color = userSelectedColor;
+    satisfactionDisplayWord.textContent = getSatisfactionWord(generalSatisfactionLevel);
+    satisfactionDisplay.classList.remove('hidden');
+    
+    lifeAreas.forEach(area => {
+        area.score = area.score > 0 ? area.score : 1;
+    });
+
+    showQuestion(0);
+}
+
+function nextArea() {
+    const currentArea = lifeAreas[currentAreaIndex];
+    currentArea.score = parseInt(slider.value); 
+    currentArea.isDefined = true;
+    saveProgressToFirestore();
+
+    if (currentAreaIndex < lifeAreas.length - 1) {
+        currentAreaIndex++;
+        showQuestion(currentAreaIndex);
+    } else {
+        showSummary();
+    }
+}
+
+function prevArea() {
+    if (currentAreaIndex > 0) {
+        currentAreaIndex--;
+        showQuestion(currentAreaIndex);
+    }
+}
+
+function showSummary() {
+    questionScreen.classList.add('hidden');
+    questionScreen.classList.remove('flex');
+    summaryScreen.classList.remove('hidden');
+    summaryScreen.classList.add('flex', 'flex-col', 'justify-center', 'items-center');
+
+    const totalScore = lifeAreas.reduce((sum, area) => sum + area.score, 0);
+    const averageScore = totalScore / lifeAreas.length;
+
+    let interpretationText = '';
+    let interpretationTitle = '';
+    if (averageScore <= 3) {
+        interpretationTitle = 'Desequilibrio Fuerte';
+        interpretationText = 'Tu rueda tiene baches importantes. Es momento de hacer ajustes profundos.';
+    } else if (averageScore <= 6) {
+        interpretationTitle = 'Tensión Moderada';
+        interpretationText = 'Tu rueda avanza, pero se siente forzada. Hay áreas que necesitan atención urgente.';
+    } else if (averageScore <= 8) {
+        interpretationTitle = 'Estabilidad';
+        interpretationText = 'Tienes una base sólida. Con algunos ajustes, tu rueda puede girar con más ligereza.';
+    } else {
+        interpretationTitle = 'Bienestar Elevado';
+        interpretationText = 'Tu rueda fluye bien. Mantén lo que funciona y enfócate en sostenerlo.';
+    }
+    
+    document.getElementById('summary-interpretation').innerHTML = `
+        <p class="font-bold text-lg">${interpretationTitle}</p>
+        <p class="text-gray-600">${interpretationText}</p>
+    `;
+
+    const sortedAreas = [...lifeAreas].sort((a, b) => a.score - b.score);
+    const lowestAreas = sortedAreas.slice(0, 2);
+    document.getElementById('summary-lowest-areas').innerHTML = `
+        <p class="font-bold text-gray-700">Tus áreas con menor equilibrio hoy:</p>
+        <p class="text-gray-600">
+            <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[0]).join(' ')}</span> (${lowestAreas[0].score}), 
+            <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[1]).join(' ')}</span> (${lowestAreas[1].score})
+        </p>
+    `;
+
+    createOrUpdateChart(canvas, null, true);
+    saveProgressToFirestore();
+}
+
+async function restartEvaluation() {
+    await clearProgressInFirestore();
+    lifeAreas.forEach(area => {
+        area.score = 0;
+        area.isDefined = false;
+        area.steps = [];
+        area.keyStepIndex = null;
+    });
+    currentAreaIndex = 0;
+    userInitials = '';
+    generalSatisfactionLevel = 2;
+    userGender = 'neutro';
+    
+    // Hide all floating screens
+    summaryScreen.classList.add('hidden');
+    comparisonScreen.classList.add('hidden');
+    comparisonScreen.classList.remove('flex');
+    actionPlanScreen.classList.add('hidden');
+    visualizationScreen.classList.add('hidden');
+    bestYearColorScreen.classList.add('hidden');
+    journeyAnimationScreen.classList.add('hidden');
+    finalCongratsScreen.classList.add('hidden');
+    
+    // Restore initial flow
+    welcomeFlowContainer.classList.remove('hidden');
+    genderSelectionScreen.classList.remove('hidden');
+    document.getElementById('welcome-screen-1').classList.add('hidden');
+    document.getElementById('welcome-screen-2').classList.add('hidden');
+    document.getElementById('welcome-screen-4').classList.add('hidden');
+    initialsScreen.classList.add('hidden');
+    initialSatisfactionScreen.classList.add('hidden');
+    welcomeScreen.classList.add('hidden');
+    questionScreen.classList.add('hidden');
+    
+    // Restore layout
+    mainContent.classList.remove('md:grid', 'md:grid-cols-2');
+    chartPanel.classList.add('hidden');
+    chartPanel.classList.remove('md:flex');
+    satisfactionDisplay.classList.add('hidden');
+    personalizarApp();
+}
+
+function updateSliderFill(sliderElement) {
+    const percentage = (sliderElement.value - sliderElement.min) / (sliderElement.max - sliderElement.min) * 100;
+    sliderElement.style.background = `linear-gradient(to right, ${userSelectedColor} ${percentage}%, #e5e7eb ${percentage}%)`;
+}
+
+function updateInitialSliderLabels(value) {
+    const wordMap = initialSliderWords;
+    
+    Array.from(initialSliderNumbers).forEach(el => {
+        el.classList.remove('font-bold', 'text-gray-600');
+        el.classList.add('text-gray-400');
+    });
+    Object.values(wordMap).forEach(el => {
+        if(el) el.classList.remove('font-bold');
+    });
+
+    const selectedNumberEl = initialSliderNumbers[value - 1];
+    if(selectedNumberEl) {
+        selectedNumberEl.classList.add('font-bold', 'text-gray-600');
+        selectedNumberEl.classList.remove('text-gray-400');
+    }
+    
+    if (wordMap[value]) {
+        wordMap[value].classList.add('font-bold');
+    }
+}
+
+// --- NEW ACTION PLAN FUNCTIONS ---
+function showActionPlan() {
+    comparisonScreen.classList.add('hidden');
+    comparisonScreen.classList.remove('flex');
+    actionPlanScreen.classList.remove('hidden');
+    actionPlanAreas.innerHTML = ''; // Clear previous content
+
+    const guideBox = document.getElementById('action-plan-guide');
+    const orangeRed = '#f9442c';
+    guideBox.style.borderColor = orangeRed;
+    guideBox.style.backgroundColor = hexToRgba(orangeRed, 0.1);
+    guideBox.style.color = orangeRed;
+    
+    goToFinalScreenBtn.style.backgroundColor = orangeRed;
+    goToFinalScreenBtn.addEventListener('mouseenter', () => goToFinalScreenBtn.style.filter = 'brightness(90%)');
+    goToFinalScreenBtn.addEventListener('mouseleave', () => goToFinalScreenBtn.style.filter = 'brightness(100%)');
+
+
+    personalizarApp(); // Ensure gender-specific text is updated
+
+    lifeAreas.forEach((area, areaIndex) => {
+        // Create the main card container
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-xl shadow-md border border-gray-200';
+
+        // Card Header
+        const areaName = getAreaLabel(area).join(' ');
+        const cardHeader = `
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                    ${areaName}
+                </h3>
+                <div class="text-sm font-semibold">
+                    <span class="text-gray-500">Nivel actual: </span>
+                    <span class="text-black text-lg">${area.score}</span>
+                    <span class="text-gray-400 mx-1">/</span>
+                    <span class="text-gray-500">Deseado: </span>
+                    <span class="text-black text-lg">9</span>
+                </div>
+            </div>
+        `;
+
+        // Steps container
+        const stepsContainer = document.createElement('div');
+        stepsContainer.className = 'steps-container';
+        stepsContainer.dataset.areaIndex = areaIndex;
+
+        // Footer with "Add Step" button
+        const cardFooter = document.createElement('div');
+        cardFooter.className = 'mt-4';
+        const addStepBtn = document.createElement('button');
+        addStepBtn.className = 'text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition-colors';
+        addStepBtn.innerHTML = '<span class="text-xl leading-none">+</span> Agregar otro paso';
+        addStepBtn.onclick = () => addActionStep(areaIndex);
+        cardFooter.appendChild(addStepBtn);
+
+        // Assemble the card
+        card.innerHTML = cardHeader;
+        card.appendChild(stepsContainer);
+        card.appendChild(cardFooter);
+        actionPlanAreas.appendChild(card);
+
+        // Initial population of steps
+        populateActionSteps(areaIndex);
+    });
+
+    saveProgressToFirestore();
+}
+
+function populateActionSteps(areaIndex) {
+    const area = lifeAreas[areaIndex];
+    const container = document.querySelector(`.steps-container[data-area-index="${areaIndex}"]`);
+    if (!container) return;
+    container.innerHTML = ''; // Clear existing steps before redrawing
+
+    if (!Array.isArray(area.steps)) area.steps = [];
+    if (area.steps.length < 3) {
+      while (area.steps.length < 3) {
+          area.steps.push("");
+      }
+    }
+    
+    const question = document.createElement('p');
+    question.className = 'text-gray-700 font-medium mb-3';
+    question.textContent = '¿Qué pasos puedes dar para avanzar?';
+    container.appendChild(question);
+    
+    const stepsList = document.createElement('div');
+    stepsList.className = 'space-y-3';
+    container.appendChild(stepsList);
+
+    area.steps.forEach((stepText, stepIndex) => {
+        const stepWrapper = document.createElement('div');
+        stepWrapper.className = 'flex items-center space-x-3 group';
+
+        const star = document.createElement('span');
+        star.className = 'text-2xl transition-colors';
+        star.innerHTML = (stepText && stepText.trim() !== '') 
+            ? `<span style="color: ${bestYearColor};">★</span>` 
+            : '<span class="text-gray-300">☆</span>';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'w-full p-2 border-b-2 border-gray-200 focus:border-indigo-500 outline-none bg-transparent';
+        input.placeholder = `Paso ${stepIndex + 1}`;
+        input.value = stepText;
+        input.oninput = (e) => {
+            lifeAreas[areaIndex].steps[stepIndex] = e.target.value;
+            star.innerHTML = (e.target.value.trim() !== '') 
+                ? `<span style="color: ${bestYearColor};">★</span>` 
+                : '<span class="text-gray-300">☆</span>';
+            saveProgressToFirestore();
+        };
+
+        stepWrapper.appendChild(star);
+        stepWrapper.appendChild(input);
+        stepsList.appendChild(stepWrapper);
+    });
+}
+
+function addActionStep(areaIndex) {
+    lifeAreas[areaIndex].steps.push("");
+    populateActionSteps(areaIndex);
+    saveProgressToFirestore();
+}
+
+// --- EVENT LISTENERS ---
+    startBtn.addEventListener('click', startEvaluation);
+    nextBtn.addEventListener('click', nextArea);
+    prevBtn.addEventListener('click', prevArea);
+
+    rollWheelBtn.addEventListener('click', () => {
+        summaryScreen.classList.add('hidden');
+        startJourneyAnimation();
+    });
+    
+    goToPlanBtn.addEventListener('click', () => {
+        comparisonScreen.classList.add('hidden');
+        comparisonScreen.classList.remove('flex');
+        showActionPlan();
+    });
+
+    document.getElementById('custom-journey-next-btn').addEventListener('click', () => {
+        journeyAnimationScreen.classList.add('hidden');
+        startBestYearAnimation();
+    });
+
+    finalContinueBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        stopBestYearAnimation(true); 
+    });
+    visualizationScreen.addEventListener('click', () => stopBestYearAnimation(true));
+    
+    goToFinalScreenBtn.addEventListener('click', () => {
+        actionPlanScreen.classList.add('hidden');
+        finalCongratsScreen.classList.remove('hidden');
+        logoContainerFinal.innerHTML = logoContainerWelcome.innerHTML;
+    });
+
+    downloadPdfBtn.addEventListener('click', exportPDF);
+    
+    slider.addEventListener('input', (e) => {
+        let newScore = parseInt(e.target.value);
+        sliderValue.textContent = newScore;
+        sliderValue.style.color = userSelectedColor;
+        lifeAreas[currentAreaIndex].score = newScore;
+        updateSliderFill(e.target);
+        createOrUpdateChart(canvas, currentAreaIndex, false);
+    });
+
+    continueBtn.addEventListener('click', () => {
+        generalSatisfactionLevel = parseInt(initialSatisfactionSlider.value);
+        userSelectedColor = hslToHex(colorSlider.value, 80, 50);
+        
+        initialSatisfactionScreen.classList.add('hidden');
+        welcomeFlowContainer.classList.add('hidden');
+        welcomeScreen.classList.remove('hidden');
+        mainContent.classList.add('md:grid', 'md:grid-cols-2');
+        chartPanel.classList.remove('hidden');
+        chartPanel.classList.add('md:flex');
+        
+        lifeAreas.forEach(area => {
+            area.score = 0;
+            area.isDefined = false;
+        });
+        
+        createOrUpdateChart(canvas, -1, false);
+    });
+
+    backToSatisfactionBtn.addEventListener('click', () => {
+        welcomeScreen.classList.add('hidden');
+        initialSatisfactionScreen.classList.remove('hidden');
+        mainContent.classList.remove('md:grid', 'md:grid-cols-2');
+        chartPanel.classList.add('hidden');
+        chartPanel.classList.remove('md:flex');
+    });
+
+    colorSlider.addEventListener('input', (e) => {
+        const hue = e.target.value;
+        userSelectedColor = hslToHex(hue, 80, 50);
+        colorPreview.style.backgroundColor = userSelectedColor;
+        initialSliderValue.style.color = userSelectedColor;
+        slider.style.setProperty('--thumb-color', userSelectedColor);
+        initialSatisfactionSlider.style.setProperty('--thumb-color', userSelectedColor);
+        updateSliderFill(slider);
+        updateSliderFill(initialSatisfactionSlider); 
+    });
+
+    bestYearColorSlider.addEventListener('input', (e) => {
+        const hue = e.target.value;
+        bestYearColor = hslToHex(hue, 80, 50);
+        bestYearColorPreview.style.backgroundColor = bestYearColor;
+    });
+
+    showComparisonBtn.addEventListener('click', () => {
+        bestYearColor = hslToHex(bestYearColorSlider.value, 80, 50);
+        showFinalComparison();
+    });
+
+    backToVisualizationBtn.addEventListener('click', () => {
+        bestYearColorScreen.classList.add('hidden');
+        startBestYearAnimation();
+    });
+    
+    initialSatisfactionSlider.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value);
+        initialSliderValue.textContent = value;
+        updateInitialSliderLabels(value);
+        updateSliderFill(e.target);
+    });
+    
+    // Welcome Flow Logic
+    genderContinueBtn.addEventListener('click', () => {
+        const selectedGender = generoSelect.value;
+        if (selectedGender === 'otro') {
+            const terminacion = generoOtroInput.value.trim();
+            crearTextosCustom(terminacion);
+            userGender = 'custom';
+        } else {
+            userGender = selectedGender;
+        }
+        personalizarApp();
+        saveProgressToFirestore();
+        genderSelectionScreen.classList.add('hidden');
+        document.getElementById('welcome-screen-1').classList.remove('hidden');
+    });
+
+    document.getElementById('welcome-1-next').addEventListener('click', () => {
+        document.getElementById('welcome-screen-1').classList.add('hidden');
+        document.getElementById('welcome-screen-2').classList.remove('hidden');
+    });
+    document.getElementById('welcome-2-next').addEventListener('click', () => {
+        document.getElementById('welcome-screen-2').classList.add('hidden');
+        document.getElementById('welcome-screen-4').classList.remove('hidden');
+    });
+    document.getElementById('welcome-4-continue').addEventListener('click', () => {
+        document.getElementById('welcome-screen-4').classList.add('hidden');
+        initialsScreen.classList.remove('hidden');
+    });
+    initialsContinueBtn.addEventListener('click', () => {
+        const initials = initialsInput.value.trim().toUpperCase();
+        if (initials) {
+            userInitials = initials;
+            saveProgressToFirestore();
+            initialsScreen.classList.add('hidden');
+            initialSatisfactionScreen.classList.remove('hidden');
+        } else {
+            showModal("Por favor, introduce tus iniciales.", 'alert');
+        }
+    });
+
+    generoSelect.addEventListener('change', function() {
+        generoOtroContainer.style.display = (this.value === 'otro') ? 'block' : 'none';
+    });
+
+// --- INITIALIZATION ---
+async function initializeLifeWheelApp() {
+    alertModal.classList.add('opacity-0');
+    alertModal.querySelector('div').classList.add('scale-95');
+
+    // Setup Firebase
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    auth = getAuth(app);
+    setLogLevel('debug'); // For development
+
+    onAuthStateChanged(auth, async (user) => {
+        if (isAuthReady) return; 
+
+        if (user) {
+            userId = user.uid;
+            isAuthReady = true;
+            console.log(`User is signed in. UID: ${userId}, Anonymous: ${user.isAnonymous}`);
+
+            const hasSavedProgress = await loadProgressFromFirestore();
+            if (hasSavedProgress) {
+                const restore = await showModal("¿Quieres recuperar tu avance anterior de la Rueda de la Vida?", 'confirm');
+                if (restore) {
+                    initialSatisfactionSlider.value = generalSatisfactionLevel;
+                    initialSliderValue.textContent = generalSatisfactionLevel;
+                    initialsInput.value = userInitials;
+                    generoSelect.value = userGender === 'custom' ? 'otro' : userGender;
+                    if (userGender === 'custom') {
+                        const savedData = await getDoc(doc(db, 'artifacts', appId, 'users', userId, 'lifeWheelData', 'progress'));
+                        generoOtroInput.value = savedData.data()?.genderTermination || 'e';
+                        generoOtroContainer.style.display = 'block';
+                    }
+                    personalizarApp();
+                    welcomeFlowContainer.classList.add('hidden');
+                    showActionPlan(); 
+                } else {
+                    await restartEvaluation();
+                }
+            } else {
+                await restartEvaluation();
+            }
+            
+            colorPreview.style.backgroundColor = userSelectedColor;
+            initialSliderValue.style.color = userSelectedColor;
+            slider.style.setProperty('--thumb-color', userSelectedColor);
+            initialSatisfactionSlider.style.setProperty('--thumb-color', userSelectedColor);
+            bestYearColorPreview.style.backgroundColor = bestYearColor;
+            initialSatisfactionSlider.value = generalSatisfactionLevel; 
+            initialSliderValue.textContent = generalSatisfactionLevel;
+            updateInitialSliderLabels(parseInt(initialSatisfactionSlider.value));
+            updateSliderFill(initialSatisfactionSlider); 
+        }
+    });
+    
+    try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+            await signInAnonymously(auth);
+        }
+    } catch (error) {
+        console.error("Error during initial sign-in attempt:", error);
+        try {
+            await signInAnonymously(auth);
+        } catch (anonError) {
+            console.error("Critical: Fallback anonymous sign-in also failed:", anonError);
+            showModal("Hubo un problema crítico al iniciar la sesión. Por favor, recarga la página.", "alert");
+        }
+    }
+}
+
+initializeLifeWheelApp();
+</script>
+</body>
+</html>
