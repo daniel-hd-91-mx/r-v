@@ -18,12 +18,16 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Source+Serif+4:wght@700&display=swap" rel="stylesheet">
     
     <style>
         /* Custom styles for the application */
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Source Serif 4', serif;
+            font-weight: 700;
         }
         /* Custom style for the slider thumb */
         input[type=range].satisfaction-slider::-webkit-slider-thumb {
@@ -101,7 +105,7 @@
                         </div>
                         <br>
                         <br>
-                        <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">Diseña el Año que Quieres Vivir</h1>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">Diseña el Año <br> que Quieres Vivir</h1>
                         <p class="text-gray-600 mb-8 text-lg">Una experiencia interactiva para redibujar tu bienestar personal</p>
                         <button id="start-experience-btn" class="w-full max-w-xs mx-auto btn-main font-bold py-3 px-4 rounded-lg mt-8">Iniciar</button>
                     </div>
@@ -183,7 +187,7 @@
                     <h1 class="text-2xl md:text-3xl font-bold mb-6" style="color: #f9442c;">Mi Satisfacción de Vida</h1>
                     
                     <div class="mb-8">
-                          <div class="flex items-center justify-center space-x-4 mb-2">
+                        <div class="flex items-center justify-center space-x-4 mb-2">
                             <span class="text-4xl font-bold" id="initial-slider-value">2</span>
                         </div>
                         <label class="font-bold text-gray-700 text-center block">¿Cuál es tu satisfacción general de vida al día de hoy?</label>
@@ -291,11 +295,11 @@
     <div id="journey-animation-screen" class="hidden fixed inset-0 z-50 p-4">
         <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4 pointer-events-none">
             <div id="journey-text-container" class="absolute top-1/4 w-full max-w-3xl px-4">
-                 <div id="custom-journey-header-1" class="mb-6 text-3xl md:text-4xl font-bold" style="color: #2f4858; display: none;">Así es como estás rodando tu vida</div>
-                 <div id="custom-journey-subheader-1" class="text-xl md:text-2xl text-gray-200" style="color: #2f4858;"display: none;">Esta es la foto de tu momento actual.</div>
-                 <div id="custom-journey-header-2" class="mb-6 text-3xl md:text-4xl font-bold" style="color: #f9442c; display: none;">Esta es una rueda de vida enfocada y balanceada</div>
-                 <div id="custom-journey-subheader-2" class="text-xl md:text-2xl text-gray-300" style="color: #f9442c;"display: none;">Cuando tu vida está en balance, avanzas con energía y claridad.</div>
-                 <div id="custom-journey-header-3" data-texto="pregunta_cambiar_rueda" class="mb-8 text-2xl md:text-3xl font-bold" style="color: #f9442c; display: none;">¿Estás listo(a) para cambiar tu rueda?</div>
+                 <div id="custom-journey-header-1" class="mb-6 text-3xl md:text-4xl font-bold" style="font-family: 'Source Serif 4', serif; color: #2f4858; display: none;">Así es como estás rodando tu vida</div>
+                 <div id="custom-journey-subheader-1" class="text-xl md:text-2xl" style="color: #2f4858; display: none;">Esta es la foto de tu momento actual.</div>
+                 <div id="custom-journey-header-2" class="mb-6 text-3xl md:text-4xl font-bold" style="font-family: 'Source Serif 4', serif; color: #f9442c; display: none;">Esta es una rueda de vida <br>enfocada y balanceada</div>
+                 <div id="custom-journey-subheader-2" class="text-xl md:text-2xl" style="color: #f9442c; display: none;">Cuando tu vida está en balance, <br> avanzas con energía y claridad.</div>
+                 <div id="custom-journey-header-3" data-texto="pregunta_cambiar_rueda" class="mb-8 text-2xl md:text-3xl font-bold" style="font-family: 'Source Serif 4', serif; color: #f9442c; display: none;">¿Estás listo(a) para cambiar tu rueda?</div>
             </div>
         </div>
         <div class="absolute bottom-12 left-1/2 -translate-x-1/2 pointer-events-auto">
@@ -307,7 +311,7 @@
     <div id="visualization-screen" class="hidden fixed inset-0 bg-black z-50">
         <canvas id="star-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
         <div class="relative w-full h-full flex items-start justify-center pt-20">
-            <p id="visualization-text" class="hidden text-white text-2xl font-bold text-center max-w-2xl leading-relaxed">Cierra los ojos y visualiza un futuro cercano a un año, en donde te imagines el mejor año de tu vida.</p>
+            <p id="visualization-text" class="hidden text-white text-2xl text-center max-w-2xl leading-relaxed" style="font-family: 'Source Serif 4', serif;">Cierra los ojos y visualiza un futuro cercano a un año, en donde te imagines el mejor año de tu vida.</p>
         </div>
         <button id="final-continue-btn" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 btn-main font-bold py-3 px-6 rounded-lg">Continuar</button>
     </div>
@@ -545,6 +549,7 @@ const initialsContinueBtn = document.getElementById('initials-continue-btn');
 const generoSelect = document.getElementById('genero');
 const generoOtroInput = document.getElementById('genero_terminacion');
 const generoOtroContainer = document.getElementById('genero-otro-container');
+const logoSvgElement = document.getElementById('Capa_1');
 const logoContainerWelcome = document.getElementById('logo-container-welcome');
 const logoContainerFinal = document.getElementById('logo-container-final');
 
@@ -745,6 +750,7 @@ function createOrUpdateChart(targetCanvas, activeIndex, showAllLabels, customDat
                 suggestedMax: 9,
                 pointLabels: { 
                     font: (context) => ({
+                        family: "'Open Sans', sans-serif",
                         size: window.innerWidth < 768 ? 10 : 12,
                         weight: context.index === activeIndex || showAllLabels ? 'bold' : '500'
                     }),
@@ -826,7 +832,7 @@ modalCancelBtn.addEventListener('click', () => {
     hideModal();
 });
 
-// --- PDF EXPORT LOGIC (REWRITTEN) ---
+// --- PDF EXPORT LOGIC (CON PAGINACIÓN "1 de N") ---
 async function exportPDF() {
     if (!window.jspdf || !window.html2canvas) {
         showModal("No se pudieron cargar las librerías para generar el PDF. Intenta recargar la página.", "alert");
@@ -834,15 +840,16 @@ async function exportPDF() {
     }
 
     showModal('Generando tu informe PDF, por favor espera...', 'alert');
-    await new Promise(resolve => setTimeout(resolve, 100)); // Allow modal to show
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
     const contentWrapper = document.getElementById('pdf-content-wrapper');
 
-    // ---- 1. Primera página: logo, interpretación y gráfica ----
-    const logoHTML = logoContainerWelcome.innerHTML;
+    // --- 1. Portada / Diagnóstico / Gráfica (PÁGINA 1) ---
+    const logoHTML = logoSvgElement.outerHTML;
     const averageScore = lifeAreas.reduce((sum, area) => sum + area.score, 0) / lifeAreas.length;
     let interpretationTitle = '';
     let interpretationText = '';
@@ -863,27 +870,32 @@ async function exportPDF() {
     const lowestAreas = sortedAreas.slice(0, 2);
 
     contentWrapper.innerHTML = `
-        <div id="pdf-page-1" style="width: 210mm; min-height: 297mm; padding: 15mm 10mm 0 10mm; font-family: 'Montserrat', sans-serif; background:white;">
+        <div id="pdf-page-1" style="width: 210mm; min-height: 297mm; padding: 15mm 10mm 0 10mm; font-family: 'Open Sans', sans-serif; background:white;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #ccc; padding-bottom: 5mm;">
-                <div style="width: 80px;">${logoHTML}</div>
+                <div style="width: 40mm;">${logoHTML}</div>
                 <div style="text-align: right;">
-                    <h1 style="font-size: 22px; color: #f9442c; margin: 0;">Informe de la Rueda de la Vida</h1>
+                    <h1 style="font-family: 'Source Serif 4', serif; font-size: 22px; color: #f9442c; margin: 0;">Informe de la Rueda de la Vida</h1>
                     <p style="font-size: 11px; margin: 5px 0 0;">Iniciales: ${userInitials || 'N/A'} | Fecha: ${fixedDate.toLocaleDateString('es-ES')}</p>
                 </div>
             </div>
             <div style="margin-top: 8mm;">
-                <h2 style="font-size: 15px; font-weight: bold;">Diagnóstico: ${interpretationTitle}</h2>
+                <h2 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Diagnóstico: <br> ${interpretationTitle}</h2>
                 <p style="font-size: 12px; margin-top: 2px;">${interpretationText}</p>
-                <p style="font-size: 12px; margin-top: 4px;"><b>Áreas de enfoque principal:</b> ${getAreaLabel(lowestAreas[0]).join(' ')} (${lowestAreas[0].score}) y ${getAreaLabel(lowestAreas[1]).join(' ')} (${lowestAreas[1].score}).</p>
+                <br>
+                <p style="font-size: 12px; margin-top: 4px;"><b>Áreas de enfoque principal:</b> <br> ${getAreaLabel(lowestAreas[0]).join(' ')} (${lowestAreas[0].score}) y ${getAreaLabel(lowestAreas[1]).join(' ')} (${lowestAreas[1].score}).</p>
             </div>
+            <br>
             <div style="margin-top: 2mm; text-align: center;">
-                <h3 style="font-size: 15px; font-weight: bold;">Comparación de Ruedas</h3>
-                <canvas id="pdf-chart-comparison" width="360" height="360"></canvas>
+                <h3 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Comparación de Ruedas</h3>
+                <br>
+                <div style="width: 70%; margin-left: auto; margin-right: auto;">
+                    <canvas id="pdf-chart-comparison" width="360" height="360"></canvas>
+                </div>
             </div>
         </div>
     `;
 
-    // Renderiza la gráfica de comparación
+    // Render chart
     const idealData = new Array(lifeAreas.length).fill(9);
     const actualData = lifeAreas.map(area => area.score);
     const comparisonDatasets = [
@@ -893,8 +905,7 @@ async function exportPDF() {
     createOrUpdateChart(document.getElementById('pdf-chart-comparison'), null, true, comparisonDatasets);
 
     await new Promise(resolve => setTimeout(resolve, 300));
-
-    // Toma screenshot de la primera página
+    // Screenshot de portada
     const page1Node = document.getElementById('pdf-page-1');
     const page1Canvas = await html2canvas(page1Node, { scale: 2, useCORS: true, backgroundColor: null });
     const page1ImgData = page1Canvas.toDataURL('image/png');
@@ -902,56 +913,78 @@ async function exportPDF() {
     const page1ImgHeight = pdfWidth * page1Aspect;
     pdf.addImage(page1ImgData, 'PNG', 0, 0, pdfWidth, page1ImgHeight);
 
-    // ---- 2. Segunda página: plan de acción ----
-    let actionPlanHTML = '';
+    // --- 2. Plan de Acción, dividido en páginas si es necesario ---
+    let actionPlanBlocks = [];
     lifeAreas.forEach(area => {
         const steps = area.steps.filter(s => s && s.trim() !== '');
         if (steps.length > 0) {
-            actionPlanHTML += `
+            actionPlanBlocks.push(`
                 <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-                    <h4 style="font-size: 13px; font-weight: bold;">${getAreaLabel(area).join(' ')} (Nivel: ${area.score}/9)</h4>
+                    <h4 style="font-family: 'Source Serif 4', serif; font-size: 13px; font-weight: bold;">${getAreaLabel(area).join(' ')} (Nivel: ${area.score}/9)</h4>
                     <ul style="list-style-position: inside; padding-left: 10px; font-size: 11px;">
                         ${steps.map(step => `<li>${step}</li>`).join('')}
                     </ul>
                 </div>
-            `;
+            `);
         }
     });
 
-    if(actionPlanHTML) {
+    if (actionPlanBlocks.length > 0) {
         const targetDate = new Date(fixedDate);
         targetDate.setFullYear(targetDate.getFullYear() + 1);
         const formattedTargetDate = targetDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
 
-        contentWrapper.innerHTML = `
-            <div id="pdf-page-2" style="width: 210mm; min-height: 297mm; padding: 18mm 10mm 10mm 10mm; font-family: 'Montserrat', sans-serif; background:white;">
-                <h2 style="font-size: 16px; font-weight: bold; color: #f9442c; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Mi Plan de Acción</h2>
-                <p style="font-size: 11px; font-style: italic; margin-top: 4px;">Fecha objetivo para alcanzar este plan: ${formattedTargetDate}</p>
-                <div style="margin-top: 5mm;">
-                    ${actionPlanHTML}
+        // Define cuántos bloques caben por página:
+        const areasPorPagina = 4;
+        for (let i = 0; i < actionPlanBlocks.length; i += areasPorPagina) {
+            const isLast = (i + areasPorPagina) >= actionPlanBlocks.length;
+            contentWrapper.innerHTML = `
+                <div id="pdf-action-plan-page" style="width: 210mm; min-height: 297mm; padding: 18mm 10mm 10mm 10mm; font-family: 'Open Sans', sans-serif; background:white;">
+                    ${i === 0 ? `
+                        <h2 style="font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: bold; color: #f9442c; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Mi Plan de Acción</h2>
+                        <p style="font-size: 11px; font-style: italic; margin-top: 4px;">Fecha objetivo para alcanzar este plan: ${formattedTargetDate}</p>
+                    ` : ""}
+                    <div style="margin-top: 5mm;">
+                        ${actionPlanBlocks.slice(i, i + areasPorPagina).join('')}
+                    </div>
+                    ${isLast ? `
+                        <div style="margin-top: 18px; padding: 10px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e5e7eb; font-size: 12px;">
+                            <b>¿Dudas o quieres llevar tu desarrollo personal al siguiente nivel?</b><br>
+                            Contáctame: Daniel Hernández | Coach Profesional ICF<br>
+                            <span style="font-size:11px;">Correo electrónico: <a href="mailto:enciende.ignius@gmail.com" style="color:#f9442c;">enciende.ignius@gmail.com</a></span>
+                        </div>
+                    ` : ""}
                 </div>
-            </div>
-        `;
+            `;
+            await new Promise(resolve => setTimeout(resolve, 200));
+            // Screenshot y agregar página
+            const node = document.getElementById('pdf-action-plan-page');
+            const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: null });
+            const imgData = canvas.toDataURL('image/png');
+            const aspect = canvas.height / canvas.width;
+            const imgHeight = pdfWidth * aspect;
 
-        await new Promise(resolve => setTimeout(resolve, 200));
-
-        // Toma screenshot de la segunda página
-        const page2Node = document.getElementById('pdf-page-2');
-        const page2Canvas = await html2canvas(page2Node, { scale: 2, useCORS: true, backgroundColor: null });
-        const page2ImgData = page2Canvas.toDataURL('image/png');
-        const page2Aspect = page2Canvas.height / page2Canvas.width;
-        const page2ImgHeight = pdfWidth * page2Aspect;
-
-        // Nueva página y agrega la imagen
-        pdf.addPage();
-        pdf.addImage(page2ImgData, 'PNG', 0, 0, pdfWidth, page2ImgHeight);
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
+        }
     }
 
-    // Descarga
+    // --- PAGINACIÓN: "X de N" en cada hoja ---
+    const totalPages = pdf.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(11);
+        pdf.setTextColor(180);
+        pdf.text(`${i} de ${totalPages}`, pdfWidth / 2, pdfHeight - 8, { align: 'center' });
+    }
+
+    // Descargar PDF
     pdf.save(`Informe-Rueda-de-la-Vida-${userInitials || 'Usuario'}.pdf`);
-    contentWrapper.innerHTML = ''; // Limpia
+    contentWrapper.innerHTML = '';
     hideModal();
 }
+
+
 
 // --- ANIMATION LOGIC ---
 const starPath = new Path2D("M127.85,57.41c-8.7-10.83-23.46-15.79-37.1-13.74-1.24-6.61-2.8-13.55-6.9-19.01-4.06-5.41-10.07-9.91-15.92-13.22-5.86,3.31-11.87,7.81-15.92,13.22-4.1,5.46-5.66,12.4-6.9,19.01-13.64-2.05-28.4,2.91-37.1,13.74,3.43,13.37,11.99,24.41,23.85,31.2-7.16,11.57-6.88,26.69,0,38.32,13.27,1.53,27-.53,36.07-11.2,9.07,10.66,22.8,12.72,36.07,11.2,6.88-11.63,7.16-26.75,0-38.32,11.86-6.8,20.42-17.83,23.85-31.2Z");
@@ -969,28 +1002,23 @@ function drawCustomStar(ctx, cx, cy, scale, opacity = 1) {
 
 function drawWheelShape(ctx, scores, centerX, centerY, rotation, maxRadius, getRadiusAtAngle, color) {
     ctx.save();
-    ctx.translate(centerX, centerY); // Mueve el origen al centro de la rueda
-    ctx.rotate(rotation); // Rota el canvas
+    ctx.translate(centerX, centerY);
+    ctx.rotate(rotation);
 
     ctx.beginPath();
     for (let i = 0; i <= scores.length; i++) {
         const index = i % scores.length;
         const angle = (index / scores.length) * 2 * Math.PI - (Math.PI / 2);
-        // Calcula el radio para este ángulo, interpolando entre puntos
         const radius = getRadiusAtAngle(angle);
-        
         const x = radius * Math.cos(angle);
         const y = radius * Math.sin(angle);
-        
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
     }
     ctx.closePath();
-    
-    // Dibuja el polígono
-    const fillColor = color || userSelectedColor;
-    ctx.fillStyle = hexToRgba(fillColor, 1);
-    ctx.strokeStyle = fillColor;
+
+    ctx.fillStyle = hexToRgba(color || userSelectedColor, 1);
+    ctx.strokeStyle = color || userSelectedColor;
     ctx.lineWidth = 3;
     ctx.fill();
     ctx.stroke();
@@ -1022,17 +1050,17 @@ function startJourneyAnimation() {
 
     const userScores = lifeAreas.map(area => area.score);
     const averageScore = userScores.reduce((a, b) => a + b, 0) / userScores.length;
-    const maxRadius = Math.min(w, h) * 0.15; // Radio máximo de la rueda
-    const groundHeight = h * 0.15; // Altura del "suelo"
+    const maxRadius = Math.min(w, h) * 0.15;
+    const groundHeight = h * 0.15;
     const endX = w - 80 - maxRadius;
 
-    let wheelX = -maxRadius; // Posición X inicial
-    let rotation = 0; // Rotación inicial
+    let wheelX = -maxRadius;
+    let rotation = 0;
 
     const idealScores = new Array(lifeAreas.length).fill(9);
     let idealWheelX = -maxRadius;
     let idealRotation = 0;
-    const idealWheelColor = '#FF4500'; // Orange-red
+    const idealWheelColor = '#FF4500';
 
     const map_range = (value, low1, high1, low2, high2) => low2 + (high2 - low2) * (value - low1) / (high1 - low1);
     let targetLinearSpeed;
@@ -1041,7 +1069,6 @@ function startJourneyAnimation() {
     } else {
         targetLinearSpeed = map_range(averageScore, 5, 9, 1.2, 2.5);
     }
-    
     const getRadiusAtAngle = (scores) => (angle) => {
         const normAngle = (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
         const anglePerSegment = (2 * Math.PI) / scores.length;
@@ -1054,7 +1081,6 @@ function startJourneyAnimation() {
         const interpolatedScore = startScore + (endScore - startScore) * progressInSegment;
         return (interpolatedScore / 9) * maxRadius;
     };
-    
     const getLowestPointY = (rot, scores) => {
         let lowestY = -Infinity;
         const numCheckPoints = 360; 
@@ -1094,7 +1120,7 @@ function startJourneyAnimation() {
         drawCustomStar(ctx, w - 80, h - groundHeight - 80, 0.8);
         const userWheelY = h - groundHeight - getLowestPointY(rotation, userScores);
         drawWheelShape(ctx, userScores, Math.min(wheelX, endX), userWheelY, rotation, maxRadius, getRadiusAtAngle(userScores), userSelectedColor);
-        
+
         if (!finished) {
             journeyAnimationId = requestAnimationFrame(animateUserWheel);
         } else {
@@ -1103,15 +1129,15 @@ function startJourneyAnimation() {
                 subheader1.style.display = 'none';
                 header2.style.display = 'block';
                 subheader2.style.display = 'block';
-                
                 setTimeout(() => {
-                    animateIdealWheel();
+                    animateIdealWheel(rotation); // Pass the final rotation
                 }, 4000); 
             }, 1000); 
         }
     }
 
-    function animateIdealWheel() {
+    // Ajuste: la función recibe la rotación final de la rueda del usuario para dejarla fija
+    function animateIdealWheel(userFinalRotation) {
         idealWheelX = -maxRadius;
         idealRotation = 0;
 
@@ -1131,8 +1157,32 @@ function startJourneyAnimation() {
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, h - groundHeight, w, groundHeight);
             drawCustomStar(ctx, w - 80, h - groundHeight - 80, 0.8);
+
+            // Dibuja la rueda del usuario en su posición final (no desaparece)
+            const userWheelY = h - groundHeight - getLowestPointY(userFinalRotation, userScores);
+            drawWheelShape(
+                ctx,
+                userScores,
+                endX,
+                userWheelY,
+                userFinalRotation,
+                maxRadius,
+                getRadiusAtAngle(userScores),
+                userSelectedColor
+            );
+
+            // Dibuja la rueda ideal avanzando
             const idealWheelY = h - groundHeight - getLowestPointY(idealRotation, idealScores);
-            drawWheelShape(ctx, idealScores, Math.min(idealWheelX, endX), idealWheelY, idealRotation, maxRadius, getRadiusAtAngle(idealScores), idealWheelColor);
+            drawWheelShape(
+                ctx,
+                idealScores,
+                Math.min(idealWheelX, endX),
+                idealWheelY,
+                idealRotation,
+                maxRadius,
+                getRadiusAtAngle(idealScores),
+                idealWheelColor
+            );
 
             if (!finished) {
                 journeyAnimationId = requestAnimationFrame(step);
@@ -1142,7 +1192,7 @@ function startJourneyAnimation() {
                     subheader2.style.display = 'none';
                     header3.style.display = 'block';
                     journeyNextBtn.style.display = 'block';
-                }, 4000); 
+                }, 4000);
             }
         }
         step();
@@ -1157,14 +1207,17 @@ function startJourneyAnimation() {
 }
 
 function startBestYearAnimation() {
-    stopBestYearAnimation(); 
     visualizationScreen.classList.remove('hidden');
     visualizationText.classList.remove('hidden');
     finalContinueBtn.classList.add('hidden');
 
     if (Tone.context.state !== 'running') {
-        Tone.start();
+        Tone.start().catch(e => console.error("Error starting Tone.js:", e));
     }
+    
+    if (soundLoop) soundLoop.dispose();
+    if (ambientSound) ambientSound.dispose();
+
     const reverb = new Tone.Reverb(4).toDestination();
     ambientSound = new Tone.Synth({
         oscillator: { type: 'sine' },
@@ -1200,6 +1253,7 @@ function startBestYearAnimation() {
         hue = (hue + 20) % 360;
     }
 
+    if (pulseInterval) clearInterval(pulseInterval);
     let pulseTimeout = setTimeout(() => {
         pulseInterval = setInterval(createPulse, 500);
     }, 7000);
@@ -1413,14 +1467,14 @@ function showSummary() {
     }
     
     document.getElementById('summary-interpretation').innerHTML = `
-        <p class="font-bold text-lg">${interpretationTitle}</p>
+        <h3 class="font-bold text-lg">${interpretationTitle}</h3>
         <p class="text-gray-600">${interpretationText}</p>
     `;
 
     const sortedAreas = [...lifeAreas].sort((a, b) => a.score - b.score);
     const lowestAreas = sortedAreas.slice(0, 2);
     document.getElementById('summary-lowest-areas').innerHTML = `
-        <p class="font-bold text-gray-700">Tus áreas con menor equilibrio hoy:</p>
+        <h4 class="font-bold text-gray-700">Tus áreas con menor equilibrio hoy:</h4>
         <p class="text-gray-600">
             <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[0]).join(' ')}</span> (${lowestAreas[0].score}), 
             <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[1]).join(' ')}</span> (${lowestAreas[1].score})
@@ -1530,7 +1584,7 @@ function showActionPlan() {
         const areaName = getAreaLabel(area).join(' ');
         const cardHeader = `
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                <h3 class="text-xl text-gray-800 flex items-center">
                     ${areaName}
                 </h3>
                 <div class="text-sm font-semibold">
@@ -1649,6 +1703,10 @@ function addActionStep(areaIndex) {
 
     document.getElementById('custom-journey-next-btn').addEventListener('click', () => {
         journeyAnimationScreen.classList.add('hidden');
+        if (journeyAnimationId) {
+            cancelAnimationFrame(journeyAnimationId);
+            journeyAnimationId = null;
+        }
         startBestYearAnimation();
     });
 
@@ -1661,7 +1719,8 @@ function addActionStep(areaIndex) {
     goToFinalScreenBtn.addEventListener('click', () => {
         actionPlanScreen.classList.add('hidden');
         finalCongratsScreen.classList.remove('hidden');
-        logoContainerFinal.innerHTML = logoContainerWelcome.innerHTML;
+        logoContainerFinal.innerHTML = ''; // Clear previous content
+        logoContainerFinal.appendChild(logoSvgElement.cloneNode(true));
     });
 
     downloadPdfBtn.addEventListener('click', exportPDF);
@@ -1784,6 +1843,8 @@ function addActionStep(areaIndex) {
 async function initializeLifeWheelApp() {
     alertModal.classList.add('opacity-0');
     alertModal.querySelector('div').classList.add('scale-95');
+
+    logoContainerWelcome.appendChild(logoSvgElement.cloneNode(true));
 
     // Setup Firebase
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
