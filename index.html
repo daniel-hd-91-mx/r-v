@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rueda de la Vida Interactiva</title>
-   
-    <!--
-  Copyright Carlos Daniel Hernández Rivera. Todos los derechos reservados.
--->
+    
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -27,7 +24,6 @@
         /* Custom styles for the application */
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #000; 
         }
         /* Custom style for the slider thumb */
         input[type=range].satisfaction-slider::-webkit-slider-thumb {
@@ -73,7 +69,7 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen">
+<body class="flex items-center justify-center min-h-screen bg-black">
     <div class="container mx-auto p-4 max-w-6xl">
         <div id="main-content" class="bg-white rounded-2xl shadow-xl overflow-hidden min-h-[70vh]">
 
@@ -256,7 +252,7 @@
                 </div>
             </div>
 
-            <div id="chart-panel" class="hidden p-4 md:p-8 bg-gray-50 md:flex items-center justify-center relative">
+            <div id="chart-panel" class="hidden p-4 md:p-8 bg-white md:flex items-center justify-center relative">
                 <canvas id="life-wheel-chart"></canvas>
                 <div id="satisfaction-display" class="hidden absolute top-4 right-4 text-right p-2 rounded-lg">
                     <p class="text-gray-600 text-sm font-semibold">Satisfacción General</p>
@@ -305,7 +301,7 @@
         <button id="final-continue-btn" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 btn-main font-bold py-3 px-6 rounded-lg">Continuar</button>
     </div>
 
-    <div id="best-year-color-screen" class="hidden fixed inset-0 bg-gray-100 z-50 p-4 flex flex-col items-center justify-center">
+    <div id="best-year-color-screen" class="hidden fixed inset-0 bg-white z-50 p-4 flex flex-col items-center justify-center">
         <div class="bg-white p-8 rounded-xl shadow-lg text-center max-w-md">
             <h1 class="text-2xl font-bold mb-4" style="color: #f9442c;">El Color de tu Mejor Año</h1>
             <p class="text-gray-600 mb-6">Elige un color que represente la energía y la sensación de tu mejor año posible.</p>
@@ -318,7 +314,7 @@
         </div>
     </div>
 
-    <div id="comparison-screen" class="hidden fixed inset-0 bg-gray-100 z-50">
+    <div id="comparison-screen" class="hidden fixed inset-0 bg-white z-50">
         <div class="w-full h-full grid md:grid-cols-2">
             <div class="flex flex-col items-center justify-center text-center p-8">
                 <h1 class="text-2xl md:text-4xl font-bold" style="color: #f9442c;">Compara tu Vida Actual y tu Mejor Año</h1>
@@ -335,7 +331,7 @@
         </div>
     </div>
 
-    <div id="action-plan-screen" class="hidden fixed inset-0 bg-gray-100 z-50 p-4 md:p-8 overflow-y-auto">
+    <div id="action-plan-screen" class="hidden fixed inset-0 bg-white z-50 p-4 md:p-8 overflow-y-auto">
         <div class="w-full max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-xl">
             <h1 class="text-3xl md:text-4xl font-bold text-center mb-4" style="color: #f9442c;">Diseña el camino hacia tu bienestar integral</h1>
             <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">Ya sabes dónde estás hoy. Ahora es momento de definir los pasos que te llevarán al equilibrio que deseas. No se trata de hacer todo de golpe, sino de comprometerte con acciones que tengan sentido para ti.</p>
@@ -362,7 +358,7 @@
         </div>
     </div>
 
-    <div id="final-congrats-screen" class="hidden fixed inset-0 bg-gray-100 z-50 p-4 md:p-8 overflow-y-auto flex flex-col items-center justify-center text-center">
+    <div id="final-congrats-screen" class="hidden fixed inset-0 bg-white z-50 p-4 md:p-8 overflow-y-auto flex flex-col items-center justify-center text-center">
         <div id="logo-container-final" class="absolute top-8 left-8"></div>
         <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">¡Enhorabuena!</h1>
         <div class="w-4/5 max-w-3xl mx-auto rounded-2xl p-8 mb-8">
@@ -377,7 +373,6 @@
         <p class="absolute bottom-4 text-gray-500 text-sm">Diseñada por Daniel Hernández | Coach Profesional ICF</p>
     </div>
 
-    <!-- Hidden container for rendering PDF content -->
     <div id="pdf-content-wrapper"></div>
 
 <script type="module">
@@ -867,9 +862,9 @@ async function exportPDF() {
                 <p style="font-size: 12px; margin-top: 2px;">${interpretationText}</p>
                 <p style="font-size: 12px; margin-top: 4px;"><b>Áreas de enfoque principal:</b> ${getAreaLabel(lowestAreas[0]).join(' ')} (${lowestAreas[0].score}) y ${getAreaLabel(lowestAreas[1]).join(' ')} (${lowestAreas[1].score}).</p>
             </div>
-            <div style="margin-top: 40px; text-align: center;">
+            <div style="margin-top: 2mm; text-align: center;">
                 <h3 style="font-size: 15px; font-weight: bold;">Comparación de Ruedas</h3>
-                <canvas id="pdf-chart-comparison" width="60%" height="60%"></canvas>
+                <canvas id="pdf-chart-comparison" width="360" height="360"></canvas>
             </div>
         </div>
     `;
@@ -1843,4 +1838,3 @@ initializeLifeWheelApp();
 </script>
 </body>
 </html>
-
