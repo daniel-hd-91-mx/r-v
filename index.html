@@ -434,7 +434,7 @@
 
             <div class="mt-8 text-center">
                  <a href="https://www.ignius.org/agenda-una-videollamada" target="_blank" rel="noopener noreferrer" class="btn-main font-bold py-3 px-8 rounded-lg inline-block">
-                    Solicita tu Videollamada
+                    Agendar Videollamada
                 </a>
                 <p class="mt-4 text-gray-500 text-sm">Diseñada por Daniel Hernández | Coach Profesional ICF</p>
             </div>
@@ -1029,40 +1029,72 @@ async function exportPDF() {
     const areasWithActions = selectedAreasForSummary.filter(area => area.steps.some(s => s && s.trim() !== ''));
     const areasWithoutActions = selectedAreasForSummary.filter(area => !area.steps.some(s => s && s.trim() !== ''));
 
-    // Page for areas with defined actions
-    if (areasWithActions.length > 0) {
+    if (selectedAreasForSummary.length > 0) {
         pdf.addPage();
         let currentPageY = 15;
 
-        pdf.setFont('Source Serif 4', 'bold');
-        pdf.setFontSize(16);
-        pdf.setTextColor(0, 0, 0);
-        pdf.text('Mi Plan de Acción', pdfWidth / 2, currentPageY, { align: 'center' });
-        currentPageY += 10;
+        // Add contact box
+        const contactBoxY = currentPageY;
+        pdf.setFillColor(255, 255, 224); // #FFFFE0
+        pdf.rect(margin, contactBoxY, pdfWidth - (margin * 2), 25, 'F');
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10);
+        pdf.setTextColor(0,0,0);
+        pdf.text('¿Dudas o quieres llevar tu desarrollo personal al siguiente nivel?', pdfWidth / 2, contactBoxY + 7, { align: 'center' });
+        pdf.setFont('helvetica', 'normal');
+        pdf.text('Contáctame: Daniel Hernández | Coach Profesional ICF', pdfWidth / 2, contactBoxY + 13, { align: 'center' });
+        const contactTextY = contactBoxY + 19;
+        const emailText = 'Enviar Correo';
+        const callText = 'Solicitar Videollamada';
+        const separator = ' | ';
+        const emailWidth = pdf.getStringUnitWidth(emailText) * pdf.getFontSize() / pdf.internal.scaleFactor;
+        const callWidth = pdf.getStringUnitWidth(callText) * pdf.getFontSize() / pdf.internal.scaleFactor;
+        const separatorWidth = pdf.getStringUnitWidth(separator) * pdf.getFontSize() / pdf.internal.scaleFactor;
+        const totalWidth = emailWidth + separatorWidth + callWidth;
+        let currentX = (pdfWidth - totalWidth) / 2;
+        pdf.setTextColor(249, 68, 44);
+        pdf.textWithLink(emailText, currentX, contactTextY, { url: 'mailto:enciende.ignius@gmail.com' });
+        currentX += emailWidth;
+        pdf.setTextColor(0,0,0);
+        pdf.text(separator, currentX, contactTextY);
+        currentX += separatorWidth;
+        pdf.setTextColor(249, 68, 44);
+        pdf.textWithLink(callText, currentX, contactTextY, { url: 'https://www.ignius.org/agenda-una-videollamada' });
+        currentPageY += 35;
+        pdf.setTextColor(0,0,0);
 
-        for (const area of areasWithActions) {
-            const steps = area.steps.filter(s => s && s.trim() !== '');
-            const stepsHTML = `<ul style="list-style-position: inside; padding-left: 10px; font-size: 11px; word-wrap: break-word; margin: 0;">
-                                    ${steps.map(step => `<li>${step}</li>`).join('')}
-                                 </ul>`;
-            const cardHTML = `
-                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-                    <h4 style="font-family: 'Source Serif 4', serif; font-size: 13px; font-weight: bold; margin: 0 0 5px 0;">${getAreaLabel(area).join(' ')} (Nivel: ${area.score}/9)</h4>
-                    ${stepsHTML}
-                </div>`;
-            
-            contentWrapper.innerHTML = `<div style="width: ${pdfWidth - margin * 2}mm; background: white; padding: 1mm 2mm;">${cardHTML}</div>`;
-            const node = contentWrapper.firstChild;
-            const canvas = await html2canvas(node, {scale: 2, useCORS: true});
-            const imgData = canvas.toDataURL('image/png');
-            const imgHeight = (canvas.height * (pdfWidth - margin * 2)) / canvas.width;
+        // Page for areas with defined actions
+        if (areasWithActions.length > 0) {
+            pdf.setFont('Source Serif 4', 'bold');
+            pdf.setFontSize(16);
+            pdf.setTextColor(0, 0, 0);
+            pdf.text('Mi Plan de Acción', pdfWidth / 2, currentPageY, { align: 'center' });
+            currentPageY += 10;
 
-            if (currentPageY + imgHeight > pdfHeight - margin) {
-                pdf.addPage();
-                currentPageY = margin;
+            for (const area of areasWithActions) {
+                const steps = area.steps.filter(s => s && s.trim() !== '');
+                const stepsHTML = `<ul style="list-style-position: inside; padding-left: 10px; font-size: 11px; word-wrap: break-word; margin: 0;">
+                                        ${steps.map(step => `<li>${step}</li>`).join('')}
+                                     </ul>`;
+                const cardHTML = `
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+                        <h4 style="font-family: 'Source Serif 4', serif; font-size: 13px; font-weight: bold; margin: 0 0 5px 0;">${getAreaLabel(area).join(' ')} (Nivel: ${area.score}/9)</h4>
+                        ${stepsHTML}
+                    </div>`;
+                
+                contentWrapper.innerHTML = `<div style="width: ${pdfWidth - margin * 2}mm; background: white; padding: 1mm 2mm;">${cardHTML}</div>`;
+                const node = contentWrapper.firstChild;
+                const canvas = await html2canvas(node, {scale: 2, useCORS: true});
+                const imgData = canvas.toDataURL('image/png');
+                const imgHeight = (canvas.height * (pdfWidth - margin * 2)) / canvas.width;
+
+                if (currentPageY + imgHeight > pdfHeight - margin) {
+                    pdf.addPage();
+                    currentPageY = margin;
+                }
+                pdf.addImage(imgData, 'PNG', margin, currentPageY, pdfWidth - margin * 2, imgHeight);
+                currentPageY += imgHeight + 2;
             }
-            pdf.addImage(imgData, 'PNG', margin, currentPageY, pdfWidth - margin * 2, imgHeight);
-            currentPageY += imgHeight + 2;
         }
     }
     
