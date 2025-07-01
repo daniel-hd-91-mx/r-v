@@ -61,6 +61,11 @@
         .btn-main:hover {
             background-color: #e03c26;
         }
+        .btn-main:disabled {
+            background-color: #f9442c;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
         /* Styles for PDF generation container */
         #pdf-content-wrapper {
             position: absolute;
@@ -71,12 +76,17 @@
             background: white;
             color: black;
         }
+        /* ✅ Corrección para el PDF: Asegura que el tamaño de los elementos no se desborde */
+        #pdf-content-wrapper * {
+            box-sizing: border-box;
+        }
         .rotate-180 {
             transform: rotate(180deg);
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-black">
+<body class="flex items-center justify-center min-h-screen bg-black pt-3">
+    
     <div class="container mx-auto p-4 max-w-6xl">
         <div id="main-content" class="bg-white rounded-2xl shadow-xl overflow-hidden min-h-[70vh]">
 
@@ -113,16 +123,32 @@
                         <button id="start-experience-btn" class="w-full max-w-xs mx-auto btn-main font-bold py-3 px-4 rounded-lg mt-8">Iniciar</button>
                     </div>
 
+                    <div id="ignius-welcome-screen" class="hidden flex flex-col justify-center h-full text-center">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">¡Hola! Soy ignius Coach,<br> tu acompañante en esta actividad.</h1>
+                        <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8">
+                            <p class="text-gray-600 text-lg leading-relaxed">
+                                A través de esta experiencia, observarás aspectos de tu vida, para encontrar claridad y diseñar un plan para alcanzar el bienestar que mereces.
+                                <br>
+                            </p>
+                            <button id="ignius-continue-btn" class="w-full max-w-xs mx-auto btn-main font-bold py-3 px-4 rounded-lg mt-8">Continuar</button>
+                        </div>
+                    </div>
+
                     <div id="gender-selection-screen" class="hidden flex flex-col justify-center h-full text-center">
                         <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">Antes de arrancar...</h1>
-                        <p class="text-gray-600 mb-8 text-lg">Para personalizar tu experiencia</p>
+                        
+                        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 my-4 rounded-md max-w-md mx-auto" role="alert">
+                          <p>Te recomiendo realizar esta actividad en tu tableta o computadora para una mejor experiencia.</p>
+                        </div>
+
                         <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8">
+                            <p class="text-gray-600 mb-8 text-lg">Para personalizar tu experiencia</p>
                             <div class="mb-6">
-                                <label for="genero" class="block mb-2 font-semibold text-lg">¿Con qué género te identificas?</label>
+                                <label for="genero" class="block mb-2 font-semibold text-lg">¿Cómo te gustaría que me dirija hacia ti?</label>
                                 <select id="genero" class="p-2 rounded border w-full max-w-xs mx-auto">
-                                    <option value="neutro">Prefiero no decirlo</option>
-                                    <option value="femenino">Mujer</option>
-                                    <option value="masculino">Hombre</option>
+                                    <option value="neutro">Prefiero no especificarlo</option>
+                                    <option value="femenino">Ella</option>
+                                    <option value="masculino">El</option>
                                     <option value="otro">Otro</option>
                                 </select>
                             </div>
@@ -135,7 +161,7 @@
                         </div>
                     </div>
 
-                    <div id="welcome-screen-1" class="hidden flex-col justify-center h-full text-center">
+                    <div id="welcome-screen-1" class="hidden flex flex-col justify-center h-full text-center">
                         <div id="logo-container-welcome" class="flex justify-left mb-5">
                         </div>
                         <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;" data-texto="titulo_bienvenida">Bienvenido al Diseño <br> de tu Mejor Año</h1>
@@ -149,7 +175,7 @@
                         </div>
                     </div>
 
-                    <div id="welcome-screen-2" class="hidden flex-col justify-center h-full text-center">
+                    <div id="welcome-screen-2" class="hidden flex flex-col justify-center h-full text-center">
                         <h1 class="text-3xl md:text-4xl font-bold mb-4 mt-24" style="color: #f9442c;">¿Qué vas a explorar hoy?</h1>
                         <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8 text-left">
                             <p class="text-gray-600 text-lg leading-relaxed">
@@ -157,26 +183,26 @@
                                 <br>
                                 Desarrollo personal, Hogar, Salud, Trabajo, Amigos, Amor, Dinero y Hobbies.
                                 <br><br>
-                                No necesitas una vida perfecta, solo honestidad contigo mismo.
+                                <span data-texto="autenticidad">No busques perfección, solo sé auténtico(a) contigo.</span>
                             </p>
                             <button id="welcome-2-next" class="w-full btn-main font-bold py-3 px-4 rounded-lg mt-8">Siguiente</button>
                         </div>
                     </div>
 
-                    <div id="welcome-screen-4" class="hidden flex-col justify-center h-full text-center">
+                    <div id="welcome-screen-4" class="hidden flex flex-col justify-center h-full text-center">
                           <h1 class="text-3xl md:text-4xl font-bold mb-4 mt-24" style="color: #f9442c;">¿Qué lograrás al terminar?</h1>
                         <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8">
                             <ul class="list-disc list-inside space-y-4 text-gray-600 text-lg leading-relaxed text-left">
                                 <li>Visualizarás tu Situación Actual.</li>
                                 <li>Visualizarás tu Vida en su Mejor Versión.</li>
-                                <li>Tendrás un mapa personal para avanzar hacia donde quieres estar.</li>
+                                <li>Tendrá un mapa personal para avanzar hacia donde quieres estar.</li>
                                 <li>La claridad de hoy puede ser el inicio de tu transformación.</li>
                             </ul>
                             <button id="welcome-4-continue" class="w-full btn-main font-bold py-3 px-4 rounded-lg mt-8">Comenzar Ahora</button>
                         </div>
                     </div>
 
-                    <div id="welcome-screen-initials" class="hidden flex-col justify-center h-full text-center">
+                    <div id="welcome-screen-initials" class="hidden flex flex-col justify-center h-full text-center">
                         <h1 class="text-3xl md:text-4xl font-bold mb-4 mt-24" style="color: #f9442c;">Tus Iniciales</h1>
                         <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8">
                             <p class="text-gray-600 mb-6 text-lg leading-relaxed">Para personalizar tu informe, por favor escribe tus iniciales.</p>
@@ -258,15 +284,15 @@
 
                 <div id="summary-screen" class="hidden text-center">
                     <h1 class="text-3xl md:text-4xl font-bold mb-2" style="color: #f9442c;">Tu Rueda Actual</h1>
-                    <p id="summary-main-text" class="text-gray-600 mb-4">Esta es una fotografía honesta de cómo estás hoy.</p>
-                    <br>
                     <div id="summary-interpretation" class="bg-gray-100 p-3 rounded-lg mb-4 text-center">
                         </div>
                     <br>
                     <div id="summary-lowest-areas" class="mb-6">
                         </div>
-
-                    <button id="roll-wheel-btn" class="w-full mb-4 btn-main font-bold py-3 px-4 rounded-lg">Continuar</button>
+                    <div class="flex justify-center items-center gap-4">
+                        <button id="summary-back-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-4 rounded-lg">Regresar</button>
+                        <button id="roll-wheel-btn" class="btn-main font-bold py-3 px-4 rounded-lg">Continuar</button>
+                    </div>
                 </div>
             </div>
 
@@ -298,11 +324,11 @@
     <div id="journey-animation-screen" class="hidden fixed inset-0 z-50 p-4">
         <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4 pointer-events-none">
             <div id="journey-text-container" class="absolute top-1/4 w-full max-w-3xl px-4">
-                 <div id="custom-journey-header-1" class="mb-6 text-3xl md:text-4xl font-bold" style="font-family: 'Source Serif 4', serif; color: #2f4858; display: none;">Así es como estás rodando tu vida</div>
-                 <div id="custom-journey-subheader-1" class="text-xl md:text-2xl" style="color: #2f4858; display: none;">Esta es la foto de tu momento actual.</div>
-                 <div id="custom-journey-header-2" class="mb-6 text-3xl md:text-4xl font-bold" style="font-family: 'Source Serif 4', serif; color: #f9442c; display: none;">Esta es una rueda de vida <br>enfocada y balanceada</div>
-                 <div id="custom-journey-subheader-2" class="text-xl md:text-2xl" style="color: #f9442c; display: none;">Cuando tu vida está en balance, <br> avanzas con energía y claridad.</div>
-                 <div id="custom-journey-header-3" data-texto="pregunta_cambiar_rueda" class="mb-8 text-2xl md:text-3xl font-bold" style="font-family: 'Source Serif 4', serif; color: #f9442c; display: none;">¿Estás listo(a) para cambiar tu rueda?</div>
+               <div id="custom-journey-header-1" class="mb-6 text-3xl md:text-4xl font-bold" style="font-family: 'Source Serif 4', serif; color: #2f4858; display: none;">Así es como estás rodando tu vida</div>
+               <div id="custom-journey-subheader-1" class="text-xl md:text-2xl" style="color: #2f4858; display: none;">Esta es la foto de tu momento actual.</div>
+               <div id="custom-journey-header-2" class="mb-6 text-3xl md:text-4xl font-bold" style="font-family: 'Source Serif 4', serif; color: #f9442c; display: none;">Esta es una rueda de vida <br>enfocada y balanceada</div>
+               <div id="custom-journey-subheader-2" class="text-xl md:text-2xl" style="color: #f9442c; display: none;">Cuando tu vida está en balance, <br> avanzas con energía y claridad.</div>
+               <div id="custom-journey-header-3" data-texto="pregunta_cambiar_rueda" class="mb-8 text-2xl md:text-3xl font-bold" style="font-family: 'Source Serif 4', serif; color: #f9442c; display: none;">¿Estás listo(a) para cambiar tu rueda?</div>
             </div>
         </div>
         <div class="absolute bottom-12 left-1/2 -translate-x-1/2 pointer-events-auto">
@@ -356,42 +382,67 @@
     </div>
 
     <div id="action-plan-screen" class="hidden fixed inset-0 bg-white z-50 p-4 md:p-8 overflow-y-auto">
-        <div class="w-full max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-xl">
-            <h1 class="text-3xl md:text-4xl font-bold text-center mb-4" style="color: #f9442c;">Diseña el camino <br>hacia tu bienestar integral</h1>
-            <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">Ya sabes dónde estás hoy.<br>Ahora es momento de definir los pasos que te llevarán al equilibrio que deseas. <br> No se trata de hacer todo de golpe, sino de comprometerte con acciones que tengan sentido para ti.</p>
+        <div class="w-full max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-2xl">
+                    <h1 class="text-3xl md:text-4xl font-bold text-center mb-4" style="color: #f9442c;">Diseña el camino <br>hacia tu bienestar integral</h1>
             
-            <div id="action-plan-content">
-                <!-- This content will be dynamically generated -->
-            </div>
-
-            <div class="text-center mt-10">
-                <p class="text-gray-600 italic mb-6">Cada paso que escribiste es una decisión hacia el equilibrio. <br>No necesitas tener todo resuelto, solo empezar con lo que hoy está en tus manos.</p>
-                <div class="flex flex-col md:flex-row justify-center items-center gap-4">
-                    <button id="download-pdf-btn" class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors">Descargar Informe (PDF)</button>
-                    <button id="go-to-final-screen-btn" class="w-full md:w-auto btn-main font-bold py-3 px-8 rounded-lg text-lg">Finalizar</button>
+            <div id="action-plan-intro">
+                        <ul class="text-center text-gray-600 mb-8 max-w-2xl mx-auto list-disc list-inside space-y-2 text-left">
+                    <li>Ya sabes dónde estás hoy.</li>
+                    <li>Ahora es momento de definir los pasos que te llevarán al equilibrio que deseas.</li>
+                    <li>No se trata de hacer todo de golpe, sino de comprometerte con acciones que tengan sentido para ti.</li>
+                </ul>
+                <div class="text-center">
+                    <button id="continue-to-builder-btn" class="w-full max-w-xs mx-auto btn-main font-bold py-3 px-4 rounded-lg mt-8">Continuar</button>
                 </div>
             </div>
+
+            <div id="action-plan-builder" class="hidden">
+                <div id="action-plan-content">
+                            </div>
+
+                <div class="text-center mt-10">
+                    <p class="text-gray-600 italic mb-6">Cada paso que escribiste es una decisión hacia el equilibrio. <br>No necesitas tener todo resuelto, solo empezar con lo que hoy está en tus manos.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <button id="download-pdf-btn" class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors">Descargar Informe (PDF)</button>
+                        <button id="go-to-final-screen-btn" class="w-full md:w-auto btn-main font-bold py-3 px-8 rounded-lg text-lg">Finalizar</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div id="final-congrats-screen" class="hidden fixed inset-0 bg-white z-50 p-4 md:p-8 overflow-y-auto flex flex-col items-center justify-center text-center">
+    <div id="final-congrats-screen" class="hidden fixed inset-0 bg-white z-50 p-4 md:p-8 overflow-y-auto flex flex-col items-center justify-start pt-12 md:pt-16 text-center">
         <div id="logo-container-final" class="absolute top-8 left-8"></div>
-        <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">¡Enhorabuena!</h1>
-        <div class="w-4/5 max-w-3xl mx-auto rounded-2xl p-8 mb-8">
-            <p class="text-gray-600 text-lg leading-relaxed text-left">
-                <b>Ya diste el primer paso. El cambio real depende de ti.</b>
-                <br><br>
-                No tienes que hacerlo <span data-texto="solo">solo(a)</span>: si quieres avanzar, <u>solicita una videollamada</u> y diseñemos tu ruta juntos.
-                <br><br>
-                <span class="text-sm bg-yellow-100 p-1 rounded">¿Quieres repetir la actividad? Solo recarga la página.</span>
+        <div class="w-full max-w-3xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold mb-6" style="color: #f9442c;">¡Enhorabuena!</h1>
+            <p class="text-gray-600 text-lg leading-relaxed text-center mb-6">
+                Ahora tienes una visión clara para alcanzar tu bienestar.
+                Si quieres acelerar tu avance y lograr tu futuro deseado, recuerda que no estás <span data-texto="solo">solo(a)</span>: con Coaching Profesional puedes hacerlo realidad.
             </p>
+
+            <div class="my-6 mx-auto max-w-xl">
+                <div style="position: relative; padding-bottom: 56.25%; /* 16:9 */ height: 0; overflow: hidden;" class="bg-gray-200 rounded-lg shadow-lg">
+                    <iframe 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                        src="https://drive.google.com/file/d/119gfFYH7fvn4FcIwk0RuKBq-aoYoLAgQ/preview" 
+                        allow="encrypted-media; fullscreen"
+                        frameborder="0">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                 <a href="https://www.ignius.org/agenda-una-videollamada" target="_blank" rel="noopener noreferrer" class="btn-main font-bold py-3 px-8 rounded-lg inline-block">
+                    Agendar Videollamada
+                </a>
+                <p class="mt-4 text-gray-500 text-sm">Diseñada por Daniel Hernández | Coach Profesional ICF</p>
+            </div>
         </div>
-        <p class="absolute bottom-4 text-gray-500 text-sm">Diseñada por Daniel Hernández | Coach Profesional ICF</p>
     </div>
 
-    <!-- Hidden container for rendering PDF content -->
-    <div id="pdf-content-wrapper"></div>
 
+    <div id="pdf-content-wrapper"></div>
 <script type="module">
 // --- FIREBASE IMPORTS ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -399,9 +450,6 @@ import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken }
 import { getFirestore, doc, getDoc, setDoc, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // --- CONFIGURATION AND INITIALIZATION ---
-// Use the fixed date and time as specified
-const fixedDate = new Date('2025-06-26T15:15:00-06:00');
-
 const textos = {
     neutro: {
         titulo_bienvenida: "Bienvenido(a) al Diseño <br> de tu Mejor Año",
@@ -410,6 +458,7 @@ const textos = {
         juntos: "juntos",
         pregunta_cambiar_rueda: "¿Estás listo(a) para cambiar tu rueda?",
         guia_pasos_3: "Sé honesto(a): no se trata de lo ideal, sino de lo que puedes realmente hacer.",
+        autenticidad: "No busques perfección, solo sé auténtico(a) contigo.",
         desarrollo_personal: ['Desarrollo', 'Personal'],
         hogar: ['Hogar'],
         salud: ['Salud'],
@@ -426,6 +475,7 @@ const textos = {
         juntos: "juntos",
         pregunta_cambiar_rueda: "¿Estás lista para cambiar tu rueda?",
         guia_pasos_3: "Sé honesta: no se trata de lo ideal, sino de lo que puedes realmente hacer.",
+        autenticidad: "No busques perfección, solo sé auténtica contigo.",
         desarrollo_personal: ['Desarrollo', 'Personal'],
         hogar: ['Hogar'],
         salud: ['Salud'],
@@ -442,6 +492,7 @@ const textos = {
         juntos: "juntos",
         pregunta_cambiar_rueda: "¿Estás listo para cambiar tu rueda?",
         guia_pasos_3: "Sé honesto: no se trata de lo ideal, sino de lo que puedes realmente hacer.",
+        autenticidad: "No busques perfección, solo sé auténtico contigo.",
         desarrollo_personal: ['Desarrollo', 'Personal'],
         hogar: ['Hogar'],
         salud: ['Salud'],
@@ -454,7 +505,6 @@ const textos = {
     custom: {} // To be filled dynamically
 };
 
-// MODIFIED: Added keyStepIndex to data model
 const lifeAreas = [
     { labelKey: 'desarrollo_personal', question: `Tiempo que dedicas a entenderte a ti mismo, a adquirir nuevos conocimientos y habilidades que te hacen evolucionar, crecer en experiencia y madurez.`, nivelBajo: ['Vida monótona y rutinaria.', 'Sensación de estancamiento.', 'Falta de novedad o crecimiento.'], nivelAlto: ['Vida rica en experiencias.', 'Desarrollo constante de habilidades.', 'Metas y proyectos con propósito.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
     { labelKey: 'hogar', question: `Tiempo que inviertes en crear y mantener un espacio físico que te brinde refugio, paz y acogimiento. Incluye tanto el orden y la limpieza como la atmósfera del lugar.`, nivelBajo: ['Genera estrés y caos.', 'Conflictos constantes en el espacio.', 'No se siente como un refugio.'], nivelAlto: ['Es tu santuario personal.', 'Ambiente de orden y armonía.', 'Refleja tu personalidad.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
@@ -465,6 +515,7 @@ const lifeAreas = [
     { labelKey: 'dinero', question: `Tiempo que dedicas a gestionar tus finanzas y a generar los recursos económicos que necesitas. No se mide por la cantidad, sino por la sensación de tranquilidad y abundancia que experimentas con lo que tienes.`, nivelBajo: ['Preocupación constante por dinero.', 'Sensación de escasez y deudas.', 'Limita tus opciones y genera estrés.'], nivelAlto: ['Control sobre tus finanzas.', 'Ingresos suficientes y tranquilidad.', 'Sensación de abundancia.'], score: 0, isDefined: false, steps: [], keyStepIndex: null },
     { labelKey: 'hobbies', question: `Tiempo que te permites dedicar exclusivamente para ti, para hacer aquellas actividades que disfrutas genuinamente y que no tienen otro fin más que el placer y la desconexión. Es tu tiempo de ocio y recreación.`, nivelBajo: ['Sin tiempo para ti.', 'Vida de solo obligaciones.', 'Agotamiento y pérdida de identidad.'], nivelAlto: ['Espacios definidos para tus pasiones.', 'Te recargan de energía y relajan.', 'Aportan equilibrio a tu vida.'], score: 0, isDefined: false, steps: [], keyStepIndex: null }
 ];
+
 let currentAreaIndex = 0;
 let chart;
 let userInitials = '';
@@ -479,6 +530,8 @@ let journeyAnimationId, starAnimationId, pulseInterval, ambientSound, soundLoop;
 
 // --- FIREBASE STATE ---
 let db, auth, userId, isAuthReady = false;
+let authReadyPromise;
+let authReadyResolver;
 
 // DOM Elements
 const mainContent = document.getElementById('main-content');
@@ -518,6 +571,7 @@ const modalCancelBtn = document.getElementById('modal-cancel-btn');
 const modalInputContainer = document.getElementById('modal-input-container');
 const modalEmailInput = document.getElementById('modal-email-input');
 const rollWheelBtn = document.getElementById('roll-wheel-btn');
+const summaryBackBtn = document.getElementById('summary-back-btn');
 const journeyAnimationScreen = document.getElementById('journey-animation-screen');
 const journeyCanvas = document.getElementById('journey-canvas');
 const visualizationScreen = document.getElementById('visualization-screen');
@@ -543,6 +597,8 @@ const finalCongratsScreen = document.getElementById('final-congrats-screen');
 const welcomeFlowContainer = document.getElementById('welcome-flow-container');
 const landingScreen = document.getElementById('landing-screen');
 const startExperienceBtn = document.getElementById('start-experience-btn');
+const igniusWelcomeScreen = document.getElementById('ignius-welcome-screen');
+const igniusContinueBtn = document.getElementById('ignius-continue-btn');
 const genderSelectionScreen = document.getElementById('gender-selection-screen');
 const genderContinueBtn = document.getElementById('gender-continue-btn');
 const initialsScreen = document.getElementById('welcome-screen-initials');
@@ -555,6 +611,14 @@ const logoSvgElement = document.getElementById('Capa_1');
 const logoContainerWelcome = document.getElementById('logo-container-welcome');
 const logoContainerFinal = document.getElementById('logo-container-final');
 
+// --- PROGRESS BAR LOGIC (DISABLED) ---
+function updateProgressBar(currentStep) {
+    // Progress bar functionality is disabled.
+}
+
+function showProgressBar(show) {
+    // Progress bar functionality is disabled.
+}
 
 // --- UTILITY FUNCTIONS ---
 function hexToRgba(hex, alpha) {
@@ -680,6 +744,7 @@ function crearTextosCustom(terminacion) {
         juntos: "juntos",
         pregunta_cambiar_rueda: `¿Estás list${terminacion} para cambiar tu rueda?`,
         guia_pasos_3: `Sé honest${terminacion}: no se trata de lo ideal, sino de lo que puedes realmente hacer.`,
+        autenticidad: `No busques perfección, solo sé auténtic${terminacion} contigo.`,
         desarrollo_personal: ['Desarrollo', 'Personal'],
         hogar: ['Hogar'],
         salud: ['Salud'],
@@ -783,6 +848,7 @@ function createOrUpdateChart(targetCanvas, activeIndex, showAllLabels, customDat
 
 // --- MODAL LOGIC ---
 let modalCallback = null;
+
 function showModal(message, type = 'alert', placeholder = '') {
     modalMessage.textContent = message;
     modalInputContainer.style.display = 'none';
@@ -824,7 +890,7 @@ function hideModal() {
 }
 
 modalConfirmBtn.addEventListener('click', () => {
-    const inputValue = modalEmailInput.style.display === 'block' ? modalEmailInput.value : true;
+    const inputValue = modalInputContainer.style.display === 'block' ? modalEmailInput.value : true;
     if (modalCallback) modalCallback(inputValue);
     hideModal();
 });
@@ -834,7 +900,8 @@ modalCancelBtn.addEventListener('click', () => {
     hideModal();
 });
 
-// --- PDF EXPORT LOGIC (REWRITTEN AND CORRECTED) ---
+
+// ✅ --- PDF EXPORT LOGIC (CORREGIDO) ---
 async function exportPDF() {
     if (!window.jspdf || !window.html2canvas) {
         showModal("No se pudieron cargar las librerías para generar el PDF. Intenta recargar la página.", "alert");
@@ -848,6 +915,7 @@ async function exportPDF() {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
+    const margin = 10;
     const contentWrapper = document.getElementById('pdf-content-wrapper');
 
     // --- 1. Portada / Diagnóstico / Gráfica (PÁGINA 1) ---
@@ -857,14 +925,14 @@ async function exportPDF() {
     let diagnostico = '';
     let descripcionDiagnostico = '';
     if (averageScore < 4.5) {
-      diagnostico = "BAJO";
-      descripcionDiagnostico = "Tu energía y motivación se encuentran en un punto bajo. Es probable que te sientas drenado(a), sin claridad o arrastrando una sensación de desgaste. Reconocerlo es el primer paso para encender una transformación real.";
+        diagnostico = "BAJO";
+        descripcionDiagnostico = "Tu energía y motivación se encuentran en un punto bajo. Es probable que te sientas drenado(a), sin claridad o arrastrando una sensación de desgaste. Reconocerlo es el primer paso para encender una transformación real.";
     } else if (averageScore < 7.5) {
-      diagnostico = "ESTABLE";
-      descripcionDiagnostico = "Tu energía y motivación se encuentran en un punto funcional, aunque no necesariamente inspirador. Estás avanzando, pero quizá no con el impulso, la claridad o el entusiasmo que quisieras. Tu vida tiene una estructura sólida, pero podrías estar sintiendo la necesidad de ajustar ciertas áreas para recuperar ligereza y dirección.";
+        diagnostico = "ESTABLE";
+        descripcionDiagnostico = "Tu energía y motivación se encuentran en un punto funcional, aunque no necesariamente inspirador. Estás avanzando, pero quizá no con el impulso, la claridad o el entusiasmo que quisieras. Tu vida tiene una estructura sólida, pero podrías estar sintiendo la necesidad de ajustar ciertas áreas para recuperar ligereza y dirección.";
     } else {
-      diagnostico = "ALTO";
-      descripcionDiagnostico = "Tu energía y motivación se encuentran en un momento elevado. Hay satisfacción y energía positiva, aunque quizá algunos ajustes podrían ayudarte a sostener este estado y expandirlo con mayor intención.";
+        diagnostico = "ALTO";
+        descripcionDiagnostico = "Tu energía y motivación se encuentran en un momento elevado. Hay satisfacción y energía positiva, aunque quizá algunos ajustes podrían ayudarte a sostener este estado y expandirlo con mayor intención.";
     }
     
     const satisfaccionGeneralTexto = getSatisfactionWord(generalSatisfactionLevel);
@@ -887,51 +955,54 @@ async function exportPDF() {
         </div>
     `;
 
-    const allScores = lifeAreas.map(a => a.score);
-    const allEqual = allScores.every(score => score === allScores[0]);
-    let focusAreasHTML = '';
+    let focusAreasHTML = `<h3 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Áreas que seleccionaste para trabajar:</h3>`;
+    if (userSelectedActionAreas.length > 0) {
+        const half = Math.ceil(userSelectedActionAreas.length / 2);
+        const col1Items = userSelectedActionAreas.slice(0, half);
+        const col2Items = userSelectedActionAreas.slice(half);
 
-    if (allEqual) {
-        focusAreasHTML = `<h3 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Áreas que seleccionaste para aumentar tu rueda:</h3>`;
-        if (userSelectedActionAreas.length > 0) {
-            const selectedAreaLabels = userSelectedActionAreas.map(key => {
+        const createColumn = (items) => {
+            return items.map(key => {
                 const area = lifeAreas.find(a => a.labelKey === key);
-                return `• ${getAreaLabel(area).join(' ')}`;
-            });
-            focusAreasHTML += `<p style="font-size: 12px; margin-top: 2px;">${selectedAreaLabels.join('<br>')}</p>`;
-        } else {
-            focusAreasHTML += `<p style="font-size: 12px; margin-top: 2px; font-style: italic;">No seleccionaste áreas específicas. Aún así, reflexionar sobre tu estado actual ya es un paso significativo.</p>`;
-        }
-    } else {
-        const sortedAreas = [...lifeAreas].sort((a, b) => a.score - b.score);
-        const lowestAreas = sortedAreas.slice(0, 2);
-        const lowestAreasText = `${getAreaLabel(lowestAreas[0]).join(' ')} (${lowestAreas[0].score}) y ${getAreaLabel(lowestAreas[1]).join(' ')} (${lowestAreas[1].score})`;
-        focusAreasHTML = `
-            <h3 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Áreas de enfoque principal:</h3>
-            <p style="font-size: 12px; margin-top: 2px;">${lowestAreasText}</p>
+                return `<li>${getAreaLabel(area).join(' ')} (${area.score})</li>`;
+            }).join('');
+        };
+
+        focusAreasHTML += `
+            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                <ul style="list-style-position: inside; padding-left: 5px; font-size: 12px; width: 48%;">
+                    ${createColumn(col1Items)}
+                </ul>
+                <ul style="list-style-position: inside; padding-left: 5px; font-size: 12px; width: 48%;">
+                    ${createColumn(col2Items)}
+                </ul>
+            </div>
         `;
+    } else {
+        focusAreasHTML += `<p style="font-size: 12px; margin-top: 2px; font-style: italic;">No seleccionaste áreas específicas para trabajar.</p>`;
     }
-
-
+    
     contentWrapper.innerHTML = `
-        <div id="pdf-page-1" style="width: 210mm; min-height: 297mm; padding: 15mm 10mm 0 10mm; font-family: 'Open Sans', sans-serif; background:white;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #ccc; padding-bottom: 5mm;">
-                <div style="width: 40mm;">${logoHTML}</div>
-                <div style="text-align: right;">
-                    <h1 style="font-family: 'Source Serif 4', serif; font-size: 22px; color: #f9442c; margin: 0;">Informe de la Rueda de la Vida</h1>
-                    <p style="font-size: 11px; margin: 5px 0 0;">Iniciales: ${userInitials || 'N/A'} | Fecha: ${fixedDate.toLocaleDateString('es-ES')}</p>
+        <div id="pdf-page-1" style="width: 210mm; height: 297mm; padding: 15mm ${margin}mm 10mm ${margin}mm; font-family: 'Open Sans', sans-serif; background:white; display: flex; flex-direction: column;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #ccc; padding-bottom: 5mm;">
+                    <div style="width: 40mm;">${logoHTML}</div>
+                    <div style="text-align: right;">
+                        <h1 style="font-family: 'Source Serif 4', serif; font-size: 22px; color: #f9442c; margin: 0;">Informe de la Rueda de la Vida</h1>
+                        <p style="font-size: 11px; margin: 5px 0 0;">Iniciales: ${userInitials || 'N/A'} | Fecha: ${new Date().toLocaleDateString('es-ES')}</p>
+                    </div>
+                </div>
+                ${satisfaccionHTML}
+                <div style="margin-top: 8mm;">
+                    <h2 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Diagnóstico de tu Rueda: ${diagnostico}</h2>
+                    <p style="font-size: 12px; margin-top: 2px;">${descripcionDiagnostico}</p>
+                </div>
+                 <div style="margin-top: 8mm;">
+                    ${focusAreasHTML}
                 </div>
             </div>
-            ${satisfaccionHTML}
-            <div style="margin-top: 8mm;">
-                <h2 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Diagnóstico de tu Rueda: ${diagnostico}</h2>
-                <p style="font-size: 12px; margin-top: 2px;">${descripcionDiagnostico}</p>
-            </div>
-             <div style="margin-top: 8mm;">
-                ${focusAreasHTML}
-            </div>
-            <div style="margin-top: 8mm; text-align: center;">
-                <h3 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Comparación de Ruedas</h3>
+            <div style="margin-top: 8mm; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                <h3 style="font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: bold;">Tu Estado Actual VS tu Estado Deseado</h3>
                 <div style="width: 70%; margin-left: auto; margin-right: auto; margin-top: 4mm;">
                     <canvas id="pdf-chart-comparison" width="360" height="360"></canvas>
                 </div>
@@ -939,99 +1010,133 @@ async function exportPDF() {
         </div>
     `;
 
-    // Render chart
     const idealData = new Array(lifeAreas.length).fill(9);
     const actualData = lifeAreas.map(area => area.score);
     const comparisonDatasets = [
         { label: 'Mejor Año Posible', data: idealData, fill: true, backgroundColor: hexToRgba(bestYearColor, 0.3), borderColor: bestYearColor, pointBackgroundColor: 'transparent', pointBorderColor: 'transparent', datalabels: { display: false } },
-        { label: 'Tu Rueda Actual', data: actualData, fill: true, backgroundColor: hexToRgba(userSelectedColor, 1.0), borderColor: userSelectedColor, pointBackgroundColor: userSelectedColor, pointBorderColor: '#fff', datalabels: { color: '#fff', backgroundColor: hexToRgba(userSelectedColor, 1.0), borderRadius: 4, font: { weight: 'bold' }, padding: 4, display: true } }
+        { label: 'Tu Rueda Actual', data: actualData, fill: true, backgroundColor: hexToRgba(userSelectedColor, 0.7), borderColor: userSelectedColor, pointBackgroundColor: userSelectedColor, pointBorderColor: '#fff', datalabels: { color: '#fff', backgroundColor: hexToRgba(userSelectedColor, 1.0), borderRadius: 4, font: { weight: 'bold' }, padding: 4, display: true } }
     ];
     createOrUpdateChart(document.getElementById('pdf-chart-comparison'), null, true, comparisonDatasets);
 
     await new Promise(resolve => setTimeout(resolve, 300));
-    // Screenshot de portada
     const page1Node = document.getElementById('pdf-page-1');
-    const page1Canvas = await html2canvas(page1Node, { scale: 2, useCORS: true, backgroundColor: null });
+    const page1Canvas = await html2canvas(page1Node, { scale: 2, useCORS: true, backgroundColor: '#FFFFFF' });
     const page1ImgData = page1Canvas.toDataURL('image/png');
-    const page1Aspect = page1Canvas.height / page1Canvas.width;
-    const page1ImgHeight = pdfWidth * page1Aspect;
-    pdf.addImage(page1ImgData, 'PNG', 0, 0, pdfWidth, page1ImgHeight);
+    pdf.addImage(page1ImgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
 
-    // --- 2. Plan de Acción, dividido en páginas si es necesario ---
-    let actionPlanBlocks = [];
-    lifeAreas.forEach(area => {
-        const steps = area.steps.filter(s => s && s.trim() !== '');
-        if (steps.length > 0) {
-            actionPlanBlocks.push(`
+    // --- 2. Plan de Acción (Summary & Worksheets) ---
+    const selectedAreasForSummary = lifeAreas.filter(area => userSelectedActionAreas.includes(area.labelKey));
+    const areasWithActions = selectedAreasForSummary.filter(area => area.steps.some(s => s && s.trim() !== ''));
+    const areasWithoutActions = selectedAreasForSummary.filter(area => !area.steps.some(s => s && s.trim() !== ''));
+
+    // Page for areas with defined actions
+    if (areasWithActions.length > 0) {
+        pdf.addPage();
+        let currentPageY = 15;
+
+        pdf.setFont('Source Serif 4', 'bold');
+        pdf.setFontSize(16);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Mi Plan de Acción', pdfWidth / 2, currentPageY, { align: 'center' });
+        currentPageY += 10;
+
+        for (const area of areasWithActions) {
+            const steps = area.steps.filter(s => s && s.trim() !== '');
+            const stepsHTML = `<ul style="list-style-position: inside; padding-left: 10px; font-size: 11px; word-wrap: break-word; margin: 0;">
+                                    ${steps.map(step => `<li>${step}</li>`).join('')}
+                                 </ul>`;
+            const cardHTML = `
                 <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-                    <h4 style="font-family: 'Source Serif 4', serif; font-size: 13px; font-weight: bold;">${getAreaLabel(area).join(' ')} (Nivel: ${area.score}/9)</h4>
-                    <ul style="list-style-position: inside; padding-left: 10px; font-size: 11px;">
-                        ${steps.map(step => `<li>${step}</li>`).join('')}
-                    </ul>
-                </div>
-            `);
-        }
-    });
-
-    if (actionPlanBlocks.length > 0) {
-        const targetDate = new Date(fixedDate);
-        targetDate.setFullYear(targetDate.getFullYear() + 1);
-        const formattedTargetDate = targetDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-
-        // Define cuántos bloques caben por página:
-        const areasPorPagina = 4;
-        for (let i = 0; i < actionPlanBlocks.length; i += areasPorPagina) {
-            const isLast = (i + areasPorPagina) >= actionPlanBlocks.length;
-            contentWrapper.innerHTML = `
-                <div id="pdf-action-plan-page" style="width: 210mm; min-height: 297mm; padding: 18mm 10mm 10mm 10mm; font-family: 'Open Sans', sans-serif; background:white;">
-                    ${i === 0 ? `
-                        <h2 style="font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: bold; color: #f9442c; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Mi Plan de Acción</h2>
-                        <p style="font-size: 11px; font-style: italic; margin-top: 4px;">Fecha objetivo para alcanzar este plan: ${formattedTargetDate}</p>
-                    ` : ""}
-                    <div style="margin-top: 5mm;">
-                        ${actionPlanBlocks.slice(i, i + areasPorPagina).join('')}
-                    </div>
-                    ${isLast ? `
-                        <div style="margin-top: 18px; padding: 10px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e5e7eb; font-size: 12px;">
-                            <b>¿Dudas o quieres llevar tu desarrollo personal al siguiente nivel?</b><br>
-                            Contáctame: Daniel Hernández | Coach Profesional ICF<br>
-                            <span style="font-size:11px;">Correo electrónico: <a href="mailto:enciende.ignius@gmail.com" style="color:#f9442c;">enciende.ignius@gmail.com</a></span>
-                        </div>
-                    ` : ""}
-                </div>
-            `;
-            await new Promise(resolve => setTimeout(resolve, 200));
-            // Screenshot y agregar página
-            const node = document.getElementById('pdf-action-plan-page');
-            const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: null });
+                    <h4 style="font-family: 'Source Serif 4', serif; font-size: 13px; font-weight: bold; margin: 0 0 5px 0;">${getAreaLabel(area).join(' ')} (Nivel: ${area.score}/9)</h4>
+                    ${stepsHTML}
+                </div>`;
+            
+            contentWrapper.innerHTML = `<div style="width: ${pdfWidth - margin * 2}mm; background: white; padding: 1mm 2mm;">${cardHTML}</div>`;
+            const node = contentWrapper.firstChild;
+            const canvas = await html2canvas(node, {scale: 2, useCORS: true});
             const imgData = canvas.toDataURL('image/png');
-            const aspect = canvas.height / canvas.width;
-            const imgHeight = pdfWidth * aspect;
+            const imgHeight = (canvas.height * (pdfWidth - margin * 2)) / canvas.width;
 
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
+            if (currentPageY + imgHeight > pdfHeight - margin) {
+                pdf.addPage();
+                currentPageY = margin;
+            }
+            pdf.addImage(imgData, 'PNG', margin, currentPageY, pdfWidth - margin * 2, imgHeight);
+            currentPageY += imgHeight + 2;
+        }
+    }
+    
+    // Create a new page for each area WITHOUT defined actions
+    for (const area of areasWithoutActions) {
+        pdf.addPage();
+        let worksheetY = 20;
+        const worksheetMargin = 15;
+        const worksheetContentWidth = pdfWidth - (worksheetMargin * 2);
+
+        pdf.setFont('Source Serif 4', 'bold');
+        pdf.setFontSize(16);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(`Plan de Acción: ${getAreaLabel(area).join(' ')}`, pdfWidth / 2, worksheetY, { align: 'center' });
+        worksheetY += 10;
+
+        pdf.setFont('helvetica', 'italic');
+        pdf.setFontSize(10);
+        pdf.setTextColor(100, 100, 100);
+        const instructionalText = "Utiliza este espacio para definir las acciones concretas que te ayudarán a avanzar en esta área.";
+        const splitText = pdf.splitTextToSize(instructionalText, worksheetContentWidth);
+        pdf.text(splitText, pdfWidth / 2, worksheetY, { align: 'center' });
+        worksheetY += (splitText.length * 5) + 10;
+
+        pdf.setDrawColor(220, 220, 220);
+        for (let lineY = worksheetY; lineY < pdfHeight - 20; lineY += 8) {
+            pdf.line(worksheetMargin, lineY, worksheetMargin + worksheetContentWidth, lineY);
         }
     }
 
-    // --- PAGINACIÓN: "X de N" en cada hoja ---
+    // --- 3. "Mis anotaciones" page ---
+    pdf.addPage();
+    let currentY = 20;
+    const notesMargin = 15;
+    const notesContentWidth = pdfWidth - (notesMargin * 2);
+
+    pdf.setFont('Source Serif 4', 'bold');
+    pdf.setFontSize(16);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('Mis anotaciones', pdfWidth / 2, currentY, { align: 'center' });
+    currentY += 10;
+    
+    pdf.setFont('helvetica', 'italic');
+    pdf.setFontSize(10);
+    pdf.setTextColor(100, 100, 100);
+    const instructionalText = "Aqui puedes anotar mas ideas o desarrollar tus acciones.";
+    const splitText = pdf.splitTextToSize(instructionalText, notesContentWidth);
+    pdf.text(splitText, pdfWidth / 2, currentY, { align: 'center' });
+    currentY += (splitText.length * 5) + 10;
+
+    pdf.setDrawColor(220, 220, 220);
+    for (let lineY = currentY; lineY < pdfHeight - 20; lineY += 8) {
+        pdf.line(notesMargin, lineY, notesMargin + notesContentWidth, lineY);
+    }
+
+    // --- 4. Page Numbers ---
     const totalPages = pdf.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
-        pdf.setFontSize(11);
-        pdf.setTextColor(180);
-        pdf.text(`${i} de ${totalPages}`, pdfWidth / 2, pdfHeight - 8, { align: 'center' });
+        pdf.setFontSize(10);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(`Página ${i} de ${totalPages}`, pdfWidth / 2, pdfHeight - 8, { align: 'center' });
     }
 
-    // Descargar PDF
     pdf.save(`Informe-Rueda-de-la-Vida-${userInitials || 'Usuario'}.pdf`);
     contentWrapper.innerHTML = '';
     hideModal();
 }
 
-
+// --- El resto del código JavaScript (animaciones, lógica de la app, etc.) no cambia ---
 
 // --- ANIMATION LOGIC ---
 const starPath = new Path2D("M127.85,57.41c-8.7-10.83-23.46-15.79-37.1-13.74-1.24-6.61-2.8-13.55-6.9-19.01-4.06-5.41-10.07-9.91-15.92-13.22-5.86,3.31-11.87,7.81-15.92,13.22-4.1,5.46-5.66,12.4-6.9,19.01-13.64-2.05-28.4,2.91-37.1,13.74,3.43,13.37,11.99,24.41,23.85,31.2-7.16,11.57-6.88,26.69,0,38.32,13.27,1.53,27-.53,36.07-11.2,9.07,10.66,22.8,12.72,36.07,11.2,6.88-11.63,7.16-26.75,0-38.32,11.86-6.8,20.42-17.83,23.85-31.2Z");
+
 function drawCustomStar(ctx, cx, cy, scale, opacity = 1) {
     ctx.save();
     ctx.globalAlpha = opacity;
@@ -1071,6 +1176,7 @@ function drawWheelShape(ctx, scores, centerX, centerY, rotation, maxRadius, getR
 
 function startJourneyAnimation() {
     journeyAnimationScreen.classList.remove('hidden');
+    showProgressBar(false);
     
     const header1 = document.getElementById('custom-journey-header-1');
     const subheader1 = document.getElementById('custom-journey-subheader-1');
@@ -1174,13 +1280,12 @@ function startJourneyAnimation() {
                 header2.style.display = 'block';
                 subheader2.style.display = 'block';
                 setTimeout(() => {
-                    animateIdealWheel(rotation); // Pass the final rotation
+                    animateIdealWheel(rotation);
                 }, 4000); 
             }, 1000); 
         }
     }
 
-    // Ajuste: la función recibe la rotación final de la rueda del usuario para dejarla fija
     function animateIdealWheel(userFinalRotation) {
         idealWheelX = -maxRadius;
         idealRotation = 0;
@@ -1202,7 +1307,6 @@ function startJourneyAnimation() {
             ctx.fillRect(0, h - groundHeight, w, groundHeight);
             drawCustomStar(ctx, w - 80, h - groundHeight - 80, 0.8);
 
-            // Dibuja la rueda del usuario en su posición final (no desaparece)
             const userWheelY = h - groundHeight - getLowestPointY(userFinalRotation, userScores);
             drawWheelShape(
                 ctx,
@@ -1215,7 +1319,6 @@ function startJourneyAnimation() {
                 userSelectedColor
             );
 
-            // Dibuja la rueda ideal avanzando
             const idealWheelY = h - groundHeight - getLowestPointY(idealRotation, idealScores);
             drawWheelShape(
                 ctx,
@@ -1254,6 +1357,7 @@ function startBestYearAnimation() {
     visualizationScreen.classList.remove('hidden');
     visualizationText.classList.remove('hidden');
     finalContinueBtn.classList.add('hidden');
+    showProgressBar(false);
 
     if (Tone.context.state !== 'running') {
         Tone.start().catch(e => console.error("Error starting Tone.js:", e));
@@ -1340,7 +1444,7 @@ function startBestYearAnimation() {
     }, 15000);
 }
 
-function stopBestYearAnimation(showComparison = false) {
+function stopBestYearAnimation(showNextScreen = false) {
     if (soundLoop) {
         soundLoop.stop(0).dispose();
         soundLoop = null;
@@ -1357,8 +1461,10 @@ function stopBestYearAnimation(showComparison = false) {
     if (starAnimationId) cancelAnimationFrame(starAnimationId);
     
     visualizationScreen.classList.add('hidden');
-    if (showComparison) {
+    if (showNextScreen) {
         bestYearColorScreen.classList.remove('hidden');
+        showProgressBar(true);
+        updateProgressBar(18);
     }
 }
 
@@ -1366,6 +1472,8 @@ function stopBestYearAnimation(showComparison = false) {
 function showFinalComparison() {
     bestYearColorScreen.classList.add('hidden');
     comparisonScreen.classList.remove('hidden');
+    showProgressBar(true);
+    updateProgressBar(19);
     
     const comparisonCanvas = document.getElementById('comparison-chart-canvas');
     
@@ -1387,13 +1495,13 @@ function showFinalComparison() {
             label: 'Tu Rueda Actual',
             data: actualData,
             fill: true,
-            backgroundColor: hexToRgba(userSelectedColor, 1.0), // Fully opaque
+            backgroundColor: hexToRgba(userSelectedColor, 1.0),
             borderColor: userSelectedColor,
             pointBackgroundColor: userSelectedColor,
             pointBorderColor: '#fff',
             datalabels: {
                 color: '#ffffff',
-                backgroundColor: hexToRgba(userSelectedColor, 1.0), // Fully opaque
+                backgroundColor: hexToRgba(userSelectedColor, 1.0),
                 borderRadius: 4,
                 font: { weight: 'bold' },
                 padding: 4,
@@ -1418,6 +1526,8 @@ function showFinalComparison() {
 }
 
 function showQuestion(index) {
+    showProgressBar(true);
+    updateProgressBar(9 + index);
     const area = lifeAreas[index];
     const label = getAreaLabel(area);
     areaCounter.textContent = `ÁREA ${index + 1} / ${lifeAreas.length}`;
@@ -1434,7 +1544,7 @@ function showQuestion(index) {
     
     updateSliderFill(slider);
 
-    prevBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
+    prevBtn.style.visibility = 'visible'; // Always visible now
     nextBtn.textContent = index === lifeAreas.length - 1 ? 'Finalizar' : 'Siguiente';
     
     areaSliderScale.innerHTML = '';
@@ -1482,10 +1592,23 @@ function prevArea() {
     if (currentAreaIndex > 0) {
         currentAreaIndex--;
         showQuestion(currentAreaIndex);
+    } else {
+        // Go back to the initial satisfaction screen
+        questionScreen.classList.add('hidden');
+        questionScreen.classList.remove('flex');
+        chartPanel.classList.add('hidden');
+        chartPanel.classList.remove('md:flex');
+        mainContent.classList.remove('md:grid', 'md:grid-cols-2');
+        
+        initialSatisfactionScreen.classList.remove('hidden');
+        initialSatisfactionScreen.classList.add('flex');
+        welcomeFlowContainer.classList.remove('hidden');
     }
 }
 
 function showSummary() {
+    showProgressBar(true);
+    updateProgressBar(17);
     questionScreen.classList.add('hidden');
     questionScreen.classList.remove('flex');
     summaryScreen.classList.remove('hidden');
@@ -1534,13 +1657,16 @@ function showSummary() {
             <p class="text-gray-600">${interpretationText}</p>
         `;
 
-        const sortedAreas = [...lifeAreas].sort((a, b) => a.score - b.score);
-        const lowestAreas = sortedAreas.slice(0, 2);
+        const lowestScore = Math.min(...allScores.filter(s => s > 0)); 
+        const lowestAreas = lifeAreas.filter(area => area.score === lowestScore);
+        const lowestAreasText = lowestAreas.map(area => 
+            `<span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(area).join(' ')}</span> (${area.score})`
+        ).join(', ');
+
         document.getElementById('summary-lowest-areas').innerHTML = `
             <p class="text-center text-gray-700 mt-4 font-semibold">Tus áreas con menor equilibrio hoy son…</p>
             <p class="text-gray-600 text-center">
-                <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[0]).join(' ')}</span> (${lowestAreas[0].score}), 
-                <span class="font-semibold" style="color: ${userSelectedColor};">${getAreaLabel(lowestAreas[1]).join(' ')}</span> (${lowestAreas[1].score})
+                ${lowestAreasText}
             </p>
         `;
     }
@@ -1549,7 +1675,7 @@ function showSummary() {
     saveProgressToFirestore();
 }
 
-async function restartEvaluation() {
+async function restartEvaluation(goToLanding = true) {
     await clearProgressInFirestore();
     lifeAreas.forEach(area => {
         area.score = 0;
@@ -1563,34 +1689,34 @@ async function restartEvaluation() {
     userGender = 'neutro';
     userSelectedActionAreas = [];
     
-    // Hide all floating screens
     summaryScreen.classList.add('hidden');
     comparisonScreen.classList.add('hidden');
-    comparisonScreen.classList.remove('flex');
     actionPlanScreen.classList.add('hidden');
     visualizationScreen.classList.add('hidden');
     bestYearColorScreen.classList.add('hidden');
     journeyAnimationScreen.classList.add('hidden');
     finalCongratsScreen.classList.add('hidden');
     
-    // Restore initial flow
-    welcomeFlowContainer.classList.remove('hidden');
-    landingScreen.classList.remove('hidden');
-    genderSelectionScreen.classList.add('hidden');
-    document.getElementById('welcome-screen-1').classList.add('hidden');
-    document.getElementById('welcome-screen-2').classList.add('hidden');
-    document.getElementById('welcome-screen-4').classList.add('hidden');
-    initialsScreen.classList.add('hidden');
-    initialSatisfactionScreen.classList.add('hidden');
-    welcomeScreen.classList.add('hidden');
-    questionScreen.classList.add('hidden');
+    if (goToLanding) {
+        welcomeFlowContainer.classList.remove('hidden');
+        landingScreen.classList.remove('hidden');
+        igniusWelcomeScreen.classList.add('hidden');
+        genderSelectionScreen.classList.add('hidden');
+        document.getElementById('welcome-screen-1').classList.add('hidden');
+        document.getElementById('welcome-screen-2').classList.add('hidden');
+        document.getElementById('welcome-screen-4').classList.add('hidden');
+        initialsScreen.classList.add('hidden');
+        initialSatisfactionScreen.classList.add('hidden');
+        welcomeScreen.classList.add('hidden');
+        questionScreen.classList.add('hidden');
+    }
     
-    // Restore layout
     mainContent.classList.remove('md:grid', 'md:grid-cols-2');
     chartPanel.classList.add('hidden');
     chartPanel.classList.remove('md:flex');
     satisfactionDisplay.classList.add('hidden');
     personalizarApp();
+    showProgressBar(false);
 }
 
 function updateSliderFill(sliderElement) {
@@ -1620,7 +1746,7 @@ function updateInitialSliderLabels(value) {
     }
 }
 
-// --- ACTION PLAN FUNCTIONS (with collapsible sections) ---
+// --- ACTION PLAN FUNCTIONS ---
 function createStepInput(areaIndex, stepIndex, stepText) {
     const stepWrapper = document.createElement('div');
     stepWrapper.className = 'flex items-center space-x-3 group';
@@ -1738,93 +1864,114 @@ function createActionPlanCard(area, areaIndex, startCollapsed) {
     return card;
 }
 
-
 function showActionPlan() {
     comparisonScreen.classList.add('hidden');
-    comparisonScreen.classList.remove('flex');
     actionPlanScreen.classList.remove('hidden');
-    actionPlanContent.innerHTML = ''; // Clear previous content
+    showProgressBar(true);
+    updateProgressBar(20);
 
+    const introView = document.getElementById('action-plan-intro');
+    const builderView = document.getElementById('action-plan-builder');
+    const continueToBuilderBtn = document.getElementById('continue-to-builder-btn');
+
+    introView.classList.remove('hidden');
+    builderView.classList.add('hidden');
+
+    continueToBuilderBtn.onclick = () => {
+        introView.classList.add('hidden');
+        builderView.classList.remove('hidden');
+        buildActionPlanInteractiveElements();
+        updateProgressBar(21);
+    };
+}
+
+function buildActionPlanInteractiveElements() {
+    actionPlanContent.innerHTML = '';
     personalizarApp(); 
 
-    const allScores = lifeAreas.map(a => a.score);
-    const allEqual = allScores.every(score => score === allScores[0]);
+    actionPlanContent.innerHTML = `
+        <p class="text-gray-700 text-center leading-relaxed">
+            Para que tu rueda crezca, <strong>elige las áreas en las que te gustaría enfocarte</strong> para dar el siguiente paso.<br>
+            No tienes que rellenarlas todas, solo las que hoy sientas más importantes.
+        </p>
+        <label class="block text-center font-medium text-gray-700 mt-6 mb-2">Selecciona una o más áreas:</label>
+        <div id="areaSelector" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 p-4 bg-gray-50 rounded-lg"></div>
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 my-4 rounded-md text-sm">
+            <p>Si por el momento no se te viene a la mente ninguna acción, déjala vacía, en tu reporte tendrás un espacio especial para explorarla a tu tiempo.</p>
+        </div>
+        <div id="action-plan-areas" class="mt-8 space-y-4"></div>
+    `;
 
-    if(allEqual) {
-        actionPlanContent.innerHTML = `
-            <p class="text-gray-700 text-center leading-relaxed">
-              Tus áreas muestran el mismo nivel actualmente.<br>
-              Eso puede ser equilibrio… o una señal de pausa.<br><br>
-              <strong>Elige las áreas que —según tu intuición— podrían elevar tu satisfacción general si dieras un paso adelante en ellas.</strong>
-            </p>
-            <label class="block text-center font-medium text-gray-700 mt-6 mb-2">Selecciona una o más áreas:</label>
-            <div id="areaSelector" class="flex flex-wrap justify-center gap-4 mt-6"></div>
-            <div id="action-plan-areas" class="mt-8 space-y-4"></div>
-        `;
-        const areaSelector = document.getElementById('areaSelector');
-        const areasContainer = document.getElementById('action-plan-areas');
-        userSelectedActionAreas = [];
+    const areaSelector = document.getElementById('areaSelector');
+    const areasContainer = document.getElementById('action-plan-areas');
+    userSelectedActionAreas = [];
 
-        lifeAreas.forEach((area, areaIndex) => {
-            const label = document.createElement('label');
-            label.className = 'flex items-center space-x-2 cursor-pointer';
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'mr-1 area-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500';
-            checkbox.dataset.areaIndex = areaIndex;
-            
-            checkbox.addEventListener('change', () => {
-                areasContainer.innerHTML = ''; // Redraw selected cards
-                userSelectedActionAreas = [];
-                document.querySelectorAll('.area-checkbox:checked').forEach(c => {
-                    const idx = parseInt(c.dataset.areaIndex);
-                    const selectedArea = lifeAreas[idx];
-                    userSelectedActionAreas.push(selectedArea.labelKey);
-                    
-                    const card = createActionPlanCard(selectedArea, idx, false); // Start expanded
-                    areasContainer.appendChild(card);
-                });
-            });
-
-            label.appendChild(checkbox);
-            label.append(getAreaLabel(area).join(' '));
-            areaSelector.appendChild(label);
-        });
-    } else {
-        actionPlanContent.innerHTML = `
-            <div id="action-plan-guide" class="p-4 rounded-r-lg mb-8">
-                <h4 class="font-bold mb-2">Instrucciones:</h4>
-                <ul class="list-disc list-inside text-sm space-y-2 mt-2">
-                    <li>Recuerda la visualización que hiciste para responder las acciones.</li>
-                    <li>Expande las áreas en las que quieras trabajar y añade tus pasos.</li>
-                    <li>No tienes que rellenar todas las áreas, enfócate en lo más importante para ti ahora.</li>
-                </ul>
-            </div>
-            <div id="action-plan-areas" class="space-y-4"></div>
-        `;
-
-        const guideBox = document.getElementById('action-plan-guide');
-        const orangeRed = '#f9442c';
-        guideBox.style.borderColor = orangeRed;
-        guideBox.style.backgroundColor = hexToRgba(orangeRed, 0.1);
-        guideBox.querySelector('h4').style.color = orangeRed;
-        guideBox.querySelector('ul').style.color = '#4b5563'; // gray-600
-
-        const areasContainer = document.getElementById('action-plan-areas');
+    lifeAreas.forEach((area, areaIndex) => {
+        const label = document.createElement('label');
+        label.className = 'flex items-center space-x-2 cursor-pointer text-gray-700 hover:text-black';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'mr-1 area-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500';
+        checkbox.dataset.areaIndex = areaIndex;
         
-        lifeAreas.forEach((area, areaIndex) => {
-            const card = createActionPlanCard(area, areaIndex, true); // Start collapsed
-            areasContainer.appendChild(card);
+        checkbox.addEventListener('change', () => {
+            areasContainer.innerHTML = '';
+            userSelectedActionAreas = [];
+            document.querySelectorAll('.area-checkbox:checked').forEach(c => {
+                const idx = parseInt(c.dataset.areaIndex);
+                const selectedArea = lifeAreas[idx];
+                userSelectedActionAreas.push(selectedArea.labelKey);
+                
+                const card = createActionPlanCard(selectedArea, idx, false);
+                areasContainer.appendChild(card);
+            });
+            saveProgressToFirestore();
         });
-    }
+
+        label.appendChild(checkbox);
+        label.append(getAreaLabel(area).join(' '));
+        areaSelector.appendChild(label);
+    });
 }
 
 // --- EVENT LISTENERS ---
-    startExperienceBtn.addEventListener('click', () => {
+    startExperienceBtn.addEventListener('click', async () => {
         landingScreen.classList.add('hidden');
-        genderSelectionScreen.classList.remove('hidden');
+        igniusWelcomeScreen.classList.remove('hidden');
+        showProgressBar(true);
+        updateProgressBar(2);
     });
-    startBtn.addEventListener('click', startEvaluation);
+
+    igniusContinueBtn.addEventListener('click', async () => {
+        igniusContinueBtn.disabled = true;
+        await authReadyPromise;
+
+        if (isAuthReady) {
+            const hasSavedProgress = await loadProgressFromFirestore();
+            if (hasSavedProgress) {
+                const restore = await showModal("¿Quieres recuperar tu avance anterior de la Rueda de la Vida?", 'confirm');
+                if (restore) {
+                    personalizarApp();
+                    welcomeFlowContainer.classList.add('hidden');
+                    showActionPlan();
+                    igniusContinueBtn.disabled = false;
+                    return;
+                } else {
+                    await restartEvaluation(false);
+                }
+            }
+        }
+        
+        igniusWelcomeScreen.classList.add('hidden');
+        genderSelectionScreen.classList.remove('hidden');
+        updateProgressBar(3);
+        igniusContinueBtn.disabled = false;
+    });
+
+    startBtn.addEventListener('click', () => {
+        startEvaluation();
+        updateProgressBar(9);
+    });
     nextBtn.addEventListener('click', nextArea);
     prevBtn.addEventListener('click', prevArea);
 
@@ -1832,10 +1979,15 @@ function showActionPlan() {
         summaryScreen.classList.add('hidden');
         startJourneyAnimation();
     });
+
+    summaryBackBtn.addEventListener('click', () => {
+        summaryScreen.classList.add('hidden');
+        questionScreen.classList.remove('hidden');
+        questionScreen.classList.add('flex');
+        showQuestion(lifeAreas.length - 1); // Go to the last question
+    });
     
     goToPlanBtn.addEventListener('click', () => {
-        comparisonScreen.classList.add('hidden');
-        comparisonScreen.classList.remove('flex');
         showActionPlan();
     });
 
@@ -1857,8 +2009,8 @@ function showActionPlan() {
     goToFinalScreenBtn.addEventListener('click', () => {
         actionPlanScreen.classList.add('hidden');
         finalCongratsScreen.classList.remove('hidden');
-        logoContainerFinal.innerHTML = ''; // Clear previous content
-        logoContainerFinal.appendChild(logoSvgElement.cloneNode(true));
+        updateProgressBar(22);
+        showProgressBar(false);
     });
 
     downloadPdfBtn.addEventListener('click', exportPDF);
@@ -1877,8 +2029,9 @@ function showActionPlan() {
         userSelectedColor = hslToHex(colorSlider.value, 80, 50);
         
         initialSatisfactionScreen.classList.add('hidden');
+        initialSatisfactionScreen.classList.remove('flex');
         welcomeFlowContainer.classList.add('hidden');
-        welcomeScreen.classList.remove('hidden');
+
         mainContent.classList.add('md:grid', 'md:grid-cols-2');
         chartPanel.classList.remove('hidden');
         chartPanel.classList.add('md:flex');
@@ -1888,7 +2041,7 @@ function showActionPlan() {
             area.isDefined = false;
         });
         
-        createOrUpdateChart(canvas, -1, false);
+        startEvaluation();
     });
 
     backToSatisfactionBtn.addEventListener('click', () => {
@@ -1897,6 +2050,7 @@ function showActionPlan() {
         mainContent.classList.remove('md:grid', 'md:grid-cols-2');
         chartPanel.classList.add('hidden');
         chartPanel.classList.remove('md:flex');
+        updateProgressBar(7);
     });
 
     colorSlider.addEventListener('input', (e) => {
@@ -1947,19 +2101,23 @@ function showActionPlan() {
         saveProgressToFirestore();
         genderSelectionScreen.classList.add('hidden');
         document.getElementById('welcome-screen-1').classList.remove('hidden');
+        updateProgressBar(4);
     });
 
     document.getElementById('welcome-1-next').addEventListener('click', () => {
         document.getElementById('welcome-screen-1').classList.add('hidden');
         document.getElementById('welcome-screen-2').classList.remove('hidden');
+        updateProgressBar(5);
     });
     document.getElementById('welcome-2-next').addEventListener('click', () => {
         document.getElementById('welcome-screen-2').classList.add('hidden');
         document.getElementById('welcome-screen-4').classList.remove('hidden');
+        updateProgressBar(6);
     });
     document.getElementById('welcome-4-continue').addEventListener('click', () => {
         document.getElementById('welcome-screen-4').classList.add('hidden');
         initialsScreen.classList.remove('hidden');
+        updateProgressBar(7);
     });
     initialsContinueBtn.addEventListener('click', () => {
         const initials = initialsInput.value.trim().toUpperCase();
@@ -1968,6 +2126,8 @@ function showActionPlan() {
             saveProgressToFirestore();
             initialsScreen.classList.add('hidden');
             initialSatisfactionScreen.classList.remove('hidden');
+            initialSatisfactionScreen.classList.add('flex');
+            updateProgressBar(8);
         } else {
             showModal("Por favor, introduce tus iniciales.", 'alert');
         }
@@ -1983,6 +2143,7 @@ async function initializeLifeWheelApp() {
     alertModal.querySelector('div').classList.add('scale-95');
 
     logoContainerWelcome.appendChild(logoSvgElement.cloneNode(true));
+    showProgressBar(false); // Hide initially
 
     // Setup Firebase
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -1990,48 +2151,22 @@ async function initializeLifeWheelApp() {
     const app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     auth = getAuth(app);
-    setLogLevel('debug'); // For development
+    setLogLevel('debug');
 
-    onAuthStateChanged(auth, async (user) => {
-        if (isAuthReady) return; 
+    authReadyPromise = new Promise(resolve => {
+        authReadyResolver = resolve;
+    });
 
-        if (user) {
-            userId = user.uid;
+    onAuthStateChanged(auth, (user) => {
+        if (!isAuthReady) {
             isAuthReady = true;
-            console.log(`User is signed in. UID: ${userId}, Anonymous: ${user.isAnonymous}`);
-
-            const hasSavedProgress = await loadProgressFromFirestore();
-            if (hasSavedProgress) {
-                const restore = await showModal("¿Quieres recuperar tu avance anterior de la Rueda de la Vida?", 'confirm');
-                if (restore) {
-                    initialSatisfactionSlider.value = generalSatisfactionLevel;
-                    initialSliderValue.textContent = generalSatisfactionLevel;
-                    initialsInput.value = userInitials;
-                    generoSelect.value = userGender === 'custom' ? 'otro' : userGender;
-                    if (userGender === 'custom') {
-                        const savedData = await getDoc(doc(db, 'artifacts', appId, 'users', userId, 'lifeWheelData', 'progress'));
-                        generoOtroInput.value = savedData.data()?.genderTermination || 'e';
-                        generoOtroContainer.style.display = 'block';
-                    }
-                    personalizarApp();
-                    welcomeFlowContainer.classList.add('hidden');
-                    showActionPlan(); 
-                } else {
-                    await restartEvaluation();
-                }
+            if (user) {
+                userId = user.uid;
+                console.log(`User is signed in. UID: ${userId}, Anonymous: ${user.isAnonymous}`);
             } else {
-                await restartEvaluation();
+                console.log("User is not signed in.");
             }
-            
-            colorPreview.style.backgroundColor = userSelectedColor;
-            initialSliderValue.style.color = userSelectedColor;
-            slider.style.setProperty('--thumb-color', userSelectedColor);
-            initialSatisfactionSlider.style.setProperty('--thumb-color', userSelectedColor);
-            bestYearColorPreview.style.backgroundColor = bestYearColor;
-            initialSatisfactionSlider.value = generalSatisfactionLevel; 
-            initialSliderValue.textContent = generalSatisfactionLevel;
-            updateInitialSliderLabels(parseInt(initialSatisfactionSlider.value));
-            updateSliderFill(initialSatisfactionSlider); 
+            authReadyResolver();
         }
     });
     
