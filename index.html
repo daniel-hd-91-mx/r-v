@@ -85,32 +85,31 @@
 <body class="flex items-center justify-center min-h-screen bg-gray-100 pt-3">
     
     <div class="container mx-auto p-4 max-w-6xl">
-        <div id="main-content" class="bg-white rounded-2xl shadow-xl overflow-hidden min-h-[70vh]">
+        <div id="main-content" class="bg-white rounded-2xl shadow-xl overflow-hidden min-h-[70vh] flex flex-col">
 
-            <!-- Left Panel: User Interaction -->
-            <div id="interaction-panel" class="p-8 md:p-12 flex flex-col">
+            <!-- Main Interaction Container -->
+            <div id="interaction-panel" class="flex-grow flex flex-col">
                 
                 <!-- Logo Header -->
-                <div class="w-full mb-8">
+                <div id="logo-header" class="w-full px-8 pt-8 pb-4 md:px-12 md:pt-12 md:pb-6 flex justify-center hidden">
                     <img src="https://raw.githubusercontent.com/daniel-hd-91-mx/r-v/main/Logo-Dan-Hernandez_Imagotipo-BLACK.png" alt="Logo Dan Hernandez" style="width: 250px;">
                 </div>
 
                 <!-- Welcome Flow: Initial screens -->
-                <div id="welcome-flow-container" class="flex-grow flex flex-col">
+                <div id="welcome-flow-container" class="hidden flex-grow flex flex-col pt-4 md:pt-6 px-8 md:px-12 pb-8 md:pb-12">
                     <!-- Landing Screen -->
                     <div id="landing-screen" class="flex flex-col justify-center h-full text-center">
-                        <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">¿Y si el verdadero desgaste viene de otra parte de tu vida… y no lo habías notado?</h1>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2" style="color: #f9442c;">¿Y si tu desgaste viene de otro lugar… y no lo habías visto?</h1>
                         <div class="text-gray-600 mb-8 text-lg px-4">
-                            <p>A veces creemos que lo profesional es el problema…</p>
-                            <p>Pero el verdadero desequilibrio puede venir de otro lugar.</p>
-                            <p class="mt-2"><strong>Esta herramienta te ayudará a descubrirlo.</strong></p>
+                            <p>No siempre es el trabajo. A veces, el desequilibrio empieza en otra área de tu vida.</p>
+                            <p class="mt-2"><strong>En 2 minutos descubrirás cuál y cómo está afectando tu energía.</strong></p>
                         </div>
-                        <button id="start-experience-btn" class="w-full max-w-xs mx-auto btn btn-main font-bold py-3 px-4 rounded-lg mt-8">Quiero descubrirlo</button>
+                        <button id="start-experience-btn" class="w-full max-w-xs mx-auto btn btn-main font-bold py-3 px-4 rounded-lg mt-8">Descubrir mi mapa de energía</button>
                     </div>
 
                     <!-- User Info Screen -->
                     <div id="user-info-screen" class="hidden flex-col justify-center h-full text-center">
-                        <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: #f9442c;">Un último paso...</h1>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-2" style="color: #f9442c;">Un último paso...</h1>
                         <div class="w-4/5 mx-auto rounded-2xl p-8 mb-8">
                             <p class="text-gray-600 mb-6 text-lg leading-relaxed">Ingresa tu nombre para personalizar tu reporte.</p>
                             <input type="text" id="user-name-input" class="w-full max-w-xs mx-auto text-center text-2xl p-2 border-b-2 border-gray-300 focus:border-red-400 outline-none mb-8" placeholder="Tu Nombre">
@@ -119,61 +118,70 @@
                     </div>
                 </div>
 
-                <!-- Question Screen -->
-                <div id="question-screen" class="hidden flex-grow flex flex-col justify-between">
-                    <div>
-                        <p id="area-counter" class="text-sm font-medium" style="color: #f9442c;">ÁREA 1 / 8</p>
-                        <h2 id="area-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-4"></h2>
-                        <p id="area-question" class="text-gray-600 mb-4"></p>
-                    </div>
-                    
-                    <div class="flex-grow flex flex-col justify-center">
-                        <div class="flex items-center justify-center space-x-4 mb-4">
-                            <span class="text-4xl font-bold" id="slider-value">1</span>
+                <!-- Question Screen & Chart Panel Container -->
+                <div id="evaluation-container" class="hidden flex-grow md:grid md:grid-cols-2">
+                    <!-- Question Content -->
+                    <div id="question-screen" class="p-8 md:p-12 flex flex-col">
+                        <div>
+                            <p id="area-counter" class="text-sm font-medium" style="color: #f9442c;">ÁREA 1 / 8</p>
+                            <h2 id="area-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-4"></h2>
+                            <p id="area-question" class="text-gray-600 mb-4"></p>
                         </div>
-                        <input id="satisfaction-slider" type="range" min="1" max="9" value="1" class="satisfaction-slider w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                        <div id="area-slider-scale" class="flex justify-between text-xs text-gray-400 mt-2 px-1"></div>
-                        <div class="flex justify-between text-xs text-gray-500 mt-1">
-                            <span class="font-bold">Me siento drenado/a</span>
-                            <span id="max-slider-label" class="font-bold">Me siento en equilibrio</span>
+                        
+                        <div class="flex-grow flex flex-col justify-center">
+                            <div class="flex items-center justify-center space-x-4 mb-4">
+                                <span class="text-4xl font-bold" id="slider-value">1</span>
+                            </div>
+                            <input id="satisfaction-slider" type="range" min="1" max="9" value="1" class="satisfaction-slider w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <div id="area-slider-scale" class="flex justify-between text-xs text-gray-400 mt-2 px-1"></div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span class="font-bold">Me siento drenado/a</span>
+                                <span id="max-slider-label" class="font-bold">Me siento en equilibrio</span>
+                            </div>
+                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600 text-xs">
+                                 <div id="low-level-desc"></div>
+                                 <div id="high-level-desc" class="text-left md:text-right"></div>
+                             </div>
                         </div>
-                         <div class="mt-4 grid grid-cols-2 gap-4 text-gray-600 text-xs">
-                             <div id="low-level-desc"></div>
-                             <div id="high-level-desc" class="text-right"></div>
-                         </div>
                     </div>
-                    
-                    <div class="mt-auto pt-4 flex justify-between items-center">
-                        <button id="prev-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg btn">Anterior</button>
-                        <button id="next-btn" class="btn btn-main font-bold py-2 px-6 rounded-lg">Siguiente</button>
+                     <!-- Chart Display Panel -->
+                    <div id="chart-panel" class="p-4 md:p-8 bg-white flex items-center justify-center relative">
+                        <canvas id="life-wheel-chart"></canvas>
                     </div>
                 </div>
 
                 <!-- Summary Screen -->
-                <div id="summary-screen" class="hidden text-center">
-                     <div class="text-center space-y-4 mb-6">
-                        <h1 class="text-2xl font-bold" style="color: #f9442c;">Tu Fotografía Actual</h1>
-                        <p class="text-gray-700 text-base leading-relaxed">
-                            Aquí está el mapa de tu energía.<br>
-                            Algunas áreas te recargan. Otras, podrían estar drenándote.<br><br>
-                            Hoy, lo que más podría estar afectando tu equilibrio es:<br>
-                            <span id="lowest-area-span" class="font-semibold text-lg text-gray-900"></span><br><br>
-                            ¿Y si comenzaras a trabajar justo ahí?
-                        </p>
+                <div id="summary-screen" class="hidden flex-grow flex-col items-center pt-4 px-8 pb-8 md:pt-6 md:px-12 md:pb-12">
+                    <!-- Title -->
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4 text-center" style="color: #f9442c;">Tu Fotografía Actual</h1>
+                    <!-- Intro Text -->
+                    <p class="text-gray-600 text-lg text-center mb-6">Aquí está el mapa de tu energía.<br>Algunas áreas te recargan. Otras, podrían estar drenándote.</p>
+                    <!-- Chart Container -->
+                    <div id="summary-chart-container" class="w-full max-w-lg mx-auto mb-6">
+                        <!-- Canvas will be moved here by JS -->
                     </div>
-                    <div class="flex flex-col md:flex-row justify-center items-center gap-4 mt-4">
-                        <button id="download-pdf-btn" class="btn btn-ghost font-semibold py-2 px-6 rounded-md">Descargar mi Fotografía</button>
-                        <a href="https://tally.so/r/m6YZDB" target="_blank" rel="noopener noreferrer" class="btn btn-main font-semibold py-2 px-6 rounded-md">Quiero hablar con un Coach</a>
+                    <!-- Lowest Area Text -->
+                    <p class="text-gray-600 text-lg text-center mb-4">Hoy, lo que más podría estar afectando tu equilibrio es:<br><span id="lowest-area-span" class="font-semibold text-xl text-gray-900"></span></p>
+                    <!-- Areas Table -->
+                    <div id="summary-table-container" class="w-full max-w-md mx-auto mb-6">
+                        <!-- Table will be generated here by JS -->
                     </div>
-                    <div class="flex flex-col md:flex-row justify-center items-center gap-4 mt-8">
-                        <button id="summary-back-btn" class="text-sm text-gray-500 hover:text-gray-700">Editar Respuestas</button>
+                    <!-- Final Prompt -->
+                    <p class="text-gray-600 text-lg text-center font-semibold mb-8">¿Y si comenzaras a trabajar justo ahí?</p>
+                    <!-- Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
+                        <button id="download-pdf-btn" class="btn btn-ghost font-semibold py-2 px-6 rounded-md w-full sm:w-auto">Descargar mi Fotografía</button>
+                        <a href="https://tally.so/r/m6YZDB" target="_blank" rel="noopener noreferrer" class="btn btn-main font-semibold py-2 px-6 rounded-md w-full sm:w-auto">Quiero hablar con un Coach</a>
                     </div>
+                    <!-- Link -->
+                    <button id="summary-back-btn" class="text-sm text-gray-500 hover:text-gray-700">Reiniciar Actividad</button>
                 </div>
             </div>
-
-            <!-- Right Panel: Chart Display -->
-            <div id="chart-panel" class="hidden p-4 md:p-8 bg-white md:flex items-center justify-center relative">
-                <canvas id="life-wheel-chart"></canvas>
+            
+            <!-- Navigation Buttons -->
+            <div id="navigation-buttons" class="hidden p-8 pt-0 md:col-span-2 flex justify-between items-center">
+                <button id="prev-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg btn">Anterior</button>
+                <button id="next-btn" class="btn btn-main font-bold py-2 px-6 rounded-lg">Siguiente</button>
             </div>
 
         </div>
@@ -223,16 +231,19 @@ const userSelectedColor = '#f9442c'; // Main theme color
 
 // --- DOM Elements ---
 const mainContent = document.getElementById('main-content');
+const logoHeader = document.getElementById('logo-header');
 const welcomeFlowContainer = document.getElementById('welcome-flow-container');
 const landingScreen = document.getElementById('landing-screen');
 const startExperienceBtn = document.getElementById('start-experience-btn');
 const userInfoScreen = document.getElementById('user-info-screen');
 const userNameInput = document.getElementById('user-name-input');
 const userInfoContinueBtn = document.getElementById('user-info-continue-btn');
+const evaluationContainer = document.getElementById('evaluation-container');
 const questionScreen = document.getElementById('question-screen');
 const summaryScreen = document.getElementById('summary-screen');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
+const navigationButtons = document.getElementById('navigation-buttons');
 const areaCounter = document.getElementById('area-counter');
 const areaTitle = document.getElementById('area-title');
 const areaQuestion = document.getElementById('area-question');
@@ -353,7 +364,6 @@ async function exportPDF() {
     const pdf = new jsPDF('l', 'mm', 'a4'); // 'l' for landscape
     const contentWrapper = document.getElementById('pdf-content-wrapper');
 
-    // Identify the lowest score(s) to highlight them in the table
     const minScore = Math.min(...lifeAreas.map(area => area.score));
     const lowestAreasKeys = lifeAreas
         .filter(area => area.score === minScore)
@@ -361,17 +371,12 @@ async function exportPDF() {
 
     const tableRows = lifeAreas.map(area => {
         const isLowest = lowestAreasKeys.includes(area.labelKey);
-        // Apply a style to the lowest-scoring rows
-        const rowStyle = isLowest
-            ? 'background-color: #fff5f5; font-weight: bold; color: #d32f2f;' // Light red
-            : '';
-
+        const rowStyle = isLowest ? 'background-color: #fff5f5; font-weight: bold; color: #d32f2f;' : '';
         return `
             <tr style="border-bottom: 1px solid #eee; ${rowStyle}">
                 <td style="padding: 5px 8px;">${getAreaLabel(area).join(' ')}</td>
                 <td style="padding: 5px 8px; text-align: right;">${area.score}</td>
-            </tr>
-        `;
+            </tr>`;
     }).join('');
     
     const lowestAreasSummary = `<p style="font-size: 14px; margin-top: 15px; color: #d32f2f;">Área más baja detectada: <strong>${lowestAreasKeys.map(key => getAreaLabel({labelKey: key}).join(' ')).join(' y ')}</strong></p>`;
@@ -382,8 +387,8 @@ async function exportPDF() {
                  <canvas id="pdf-chart" style="max-width: 100%; max-height: 100%;"></canvas>
             </div>
             <div style="width: 38%; padding-left: 20px; box-sizing: border-box;">
-                <img src="https://raw.githubusercontent.com/daniel-hd-91-mx/r-v/main/Logo-Dan-Hernandez_Imagotipo-BLACK.png" alt="Logo Dan Hernandez" style="width: 250px; margin-bottom: 20px;">
-                <h1 style="font-family: 'Source Serif 4', serif; font-size: 28px; font-weight: 700; color: #333; margin: 0;">Tu Fotografía Actual</h1>
+                <img src="https://raw.githubusercontent.com/daniel-hd-91-mx/r-v/main/Logo-Dan-Hernandez_Imagotipo-BLACK.png" alt="Logo Dan Hernandez" style="width: 250px; margin: 0 auto 20px auto; display: block;">
+                <h1 style="font-family: 'Source Serif 4', serif; font-size: 28px; font-weight: 700; color: #333; margin: 0; text-align: center;">Tu Fotografía Actual</h1>
                 <p style="font-size: 14px; margin-top: 10px; color: #555;"><strong>Usuario:</strong> ${userName || 'N/A'}</p>
                 <p style="font-size: 14px; margin-top: 5px; color: #555;"><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
                 ${lowestAreasSummary}
@@ -397,15 +402,13 @@ async function exportPDF() {
                     <tbody>${tableRows}</tbody>
                 </table>
             </div>
-        </div>
-    `;
+        </div>`;
 
     contentWrapper.innerHTML = pdfHTML;
     
-    // Create the chart specifically for the PDF render
     createOrUpdateChart(document.getElementById('pdf-chart'), null, true);
 
-    await new Promise(resolve => setTimeout(resolve, 500)); // Give chart time to render
+    await new Promise(resolve => setTimeout(resolve, 500)); 
 
     try {
         const pdfRenderArea = document.getElementById('pdf-render-area');
@@ -429,6 +432,37 @@ async function exportPDF() {
 }
 
 // --- SCREEN NAVIGATION & LOGIC ---
+const allScreens = [welcomeFlowContainer, evaluationContainer, summaryScreen];
+
+function showScreen(screenId) {
+    // Hide all screens first
+    allScreens.forEach(screen => {
+        screen.classList.add('hidden');
+        screen.classList.remove('flex', 'flex-col', 'md:grid');
+    });
+
+    // Hide logo and nav buttons by default, show as needed
+    logoHeader.classList.add('hidden');
+    navigationButtons.classList.add('hidden');
+
+    // Show the target screen and its specific dependencies
+    if (screenId === 'welcome') {
+        logoHeader.classList.remove('hidden');
+        welcomeFlowContainer.classList.remove('hidden');
+        welcomeFlowContainer.classList.add('flex', 'flex-col');
+    } else if (screenId === 'evaluation') {
+        evaluationContainer.classList.remove('hidden');
+        evaluationContainer.classList.add('flex-grow', 'md:grid');
+        navigationButtons.classList.remove('hidden');
+        navigationButtons.classList.add('flex');
+    } else if (screenId === 'summary') {
+        logoHeader.classList.remove('hidden');
+        summaryScreen.classList.remove('hidden');
+        summaryScreen.classList.add('flex', 'flex-col');
+    }
+}
+
+
 function showQuestion(index) {
     const area = lifeAreas[index];
     const label = getAreaLabel(area);
@@ -436,9 +470,8 @@ function showQuestion(index) {
     areaTitle.textContent = Array.isArray(label) ? label.join(' ') : label;
     areaQuestion.innerHTML = area.question;
 
-    // Populate the low and high level descriptions
     lowLevelDescEl.innerHTML = `<ul class='list-disc list-inside text-xs mt-1 space-y-1'>${area.nivelBajo.map(item => `<li>${item}</li>`).join('')}</ul>`;
-    highLevelDescEl.innerHTML = `<ul class='list-disc list-inside text-xs mt-1 space-y-1 text-right'>${area.nivelAlto.map(item => `<li>${item}</li>`).join('')}</ul>`;
+    highLevelDescEl.innerHTML = `<ul class='list-disc list-inside text-xs mt-1 space-y-1'>${area.nivelAlto.map(item => `<li>${item}</li>`).join('')}</ul>`;
 
     let currentScore = area.score || 1;
     slider.value = currentScore;
@@ -461,16 +494,11 @@ function showQuestion(index) {
 }
 
 function startEvaluation() {
-    welcomeFlowContainer.classList.add('hidden');
-    welcomeFlowContainer.classList.remove('flex-grow', 'flex', 'flex-col');
+    showScreen('evaluation');
 
-
-    mainContent.classList.add('md:grid', 'md:grid-cols-2');
-    chartPanel.classList.remove('hidden');
-    chartPanel.classList.add('md:flex');
-    questionScreen.classList.remove('hidden');
-    questionScreen.classList.add('flex');
-    summaryScreen.classList.add('hidden');
+    if (canvas.parentNode !== chartPanel) {
+        chartPanel.appendChild(canvas);
+    }
     
     lifeAreas.forEach(area => { area.score = area.score > 0 ? area.score : 1; });
     currentAreaIndex = 0;
@@ -496,25 +524,62 @@ function prevArea() {
 }
 
 function showSummary() {
-    questionScreen.classList.add('hidden');
-    questionScreen.classList.remove('flex');
-    summaryScreen.classList.remove('hidden');
-    summaryScreen.classList.add('flex', 'flex-col', 'justify-center', 'items-center');
+    showScreen('summary');
 
-    createOrUpdateChart(canvas, null, true);
+    const summaryChartContainer = document.getElementById('summary-chart-container');
+    summaryChartContainer.innerHTML = ''; 
+    summaryChartContainer.appendChild(canvas);
+    canvas.style.maxHeight = '400px';
 
-    // --- DYNAMIC SUMMARY TEXT ---
-    // Identify areas with the lowest score
+    const summaryTableContainer = document.getElementById('summary-table-container');
     const minScore = Math.min(...lifeAreas.map(area => area.score));
+    
+    const lowestScoringAreas = lifeAreas.filter(area => area.score === minScore);
+
+    const tableRows = lowestScoringAreas.map(area => {
+        const rowStyle = 'background-color: #fee2e2; font-weight: bold;';
+        return `<tr style="${rowStyle}">
+                    <td class="py-2 px-4 border-b">${getAreaLabel(area).join(' ')}</td>
+                    <td class="py-2 px-4 border-b text-right">${area.score}</td>
+                </tr>`;
+    }).join('');
+
+    summaryTableContainer.innerHTML = `
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 bg-gray-100 border-b font-semibold">Área de Enfoque</th>
+                    <th class="py-2 px-4 bg-gray-100 border-b font-semibold text-right">Puntuación</th>
+                </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+        </table>`;
+
     const lowestAreas = lifeAreas
       .filter(area => area.score === minScore)
       .map(area => getAreaLabel(area).join(' '));
-
-    // Get the span to display the lowest area(s)
     const lowestAreaSpan = document.getElementById('lowest-area-span');
     if (lowestAreaSpan) {
         lowestAreaSpan.innerHTML = `<strong>${lowestAreas.join(' y ')}</strong>`;
     }
+
+    createOrUpdateChart(canvas, null, true);
+}
+
+function resetApp() {
+    lifeAreas.forEach(area => { area.score = 1; });
+    userName = '';
+    currentAreaIndex = 0;
+    userNameInput.value = '';
+
+    if (canvas.parentNode !== chartPanel) {
+        chartPanel.appendChild(canvas);
+    }
+    
+    showScreen('welcome');
+
+    landingScreen.classList.remove('hidden');
+    userInfoScreen.classList.add('hidden');
 }
 
 function updateSliderFill(sliderElement) {
@@ -534,7 +599,6 @@ userInfoContinueBtn.addEventListener('click', () => {
     const name = userNameInput.value.trim();
     if (name) {
         userName = name;
-        userInfoScreen.classList.add('hidden');
         startEvaluation();
     } else {
         showSpinner("Por favor, introduce tu nombre.");
@@ -544,15 +608,7 @@ userInfoContinueBtn.addEventListener('click', () => {
 
 nextBtn.addEventListener('click', nextArea);
 prevBtn.addEventListener('click', prevArea);
-
-summaryBackBtn.addEventListener('click', () => {
-    summaryScreen.classList.add('hidden');
-    questionScreen.classList.remove('hidden');
-    questionScreen.classList.add('flex');
-    // Go back to the last question to allow easy editing
-    showQuestion(lifeAreas.length - 1);
-});
-    
+summaryBackBtn.addEventListener('click', resetApp);
 downloadPdfBtn.addEventListener('click', exportPDF);
     
 slider.addEventListener('input', (e) => {
@@ -568,11 +624,16 @@ modalConfirmBtn.addEventListener('click', hideSpinner);
 // --- INITIALIZATION ---
 function initializeApp() {
     slider.style.setProperty('--thumb-color', userSelectedColor);
+    showScreen('welcome');
+    landingScreen.classList.remove('hidden');
     console.log("Interactive Wheel of Life (with descriptions) initialized.");
 }
 
 initializeApp();
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
